@@ -30,5 +30,9 @@ export interface PropertyEvents {
    *
    * @internal
    */
-  register<T>(name: string, initialTime: number, initialVal: T): T;
+  register<T extends object>(
+    name: string,
+    initialTime: number,
+    initialVal: T,
+  ): T;
 }

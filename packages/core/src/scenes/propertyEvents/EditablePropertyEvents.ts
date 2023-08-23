@@ -46,7 +46,11 @@ export class EditablePropertyEvents implements PropertyEvents {
     this.scene.reload();
   }
 
-  public register<T>(name: string, initialTime: number, initialVal: T): T {
+  public register<T extends object>(
+    name: string,
+    initialTime: number,
+    initialVal: T,
+  ): T {
     if (this.collisionLookup.has(name)) {
       this.scene.logger.error({
         message: `name "${name}" has already been used for another event name.`,
@@ -67,8 +71,15 @@ export class EditablePropertyEvents implements PropertyEvents {
       let changed = false;
       const event = {...this.lookup[name]};
 
+      // Event time change.
       if (event.time !== initialTime) {
         event.time = initialTime;
+        changed = true;
+      }
+
+      // Property keys not fit.
+      if (!this.compareKeys(event.property, initialVal)) {
+        event.property = initialVal;
         changed = true;
       }
 
@@ -79,11 +90,15 @@ export class EditablePropertyEvents implements PropertyEvents {
 
     this.registeredEvents[name] = this.lookup[name];
 
-    if (typeof initialVal === 'object')
-      {Object.assign(initialVal as any, this.lookup[name].property);}
-    else initialVal = this.lookup[name].property;
+    Object.assign(initialVal, this.lookup[name].property);
 
     return initialVal as T;
+  }
+
+  private compareKeys(src: object, target: object) {
+    const srcKeys = Object.keys(src).sort();
+    const targetKeys = Object.keys(target).sort();
+    return JSON.stringify(srcKeys) === JSON.stringify(targetKeys);
   }
 
   /**

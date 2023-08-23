@@ -9,7 +9,10 @@ import {useThread} from './useThread';
  *
  * @returns The property value of the event in seconds.
  */
-export function useProperty<T>(name: string, defaultProperty: T): T {
+export function useProperty<T extends object>(
+  name: string,
+  defaultProperty: T,
+): T {
   const scene = useScene();
   const thread = useThread();
   return scene.propertyEvents.register<T>(name, thread.time(), defaultProperty);
