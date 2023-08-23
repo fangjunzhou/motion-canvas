@@ -2,7 +2,7 @@ import type {NumberMetaField} from '@motion-canvas/core/lib/meta';
 import {Input, InputSelect} from '../controls';
 import {useDrag, useSubscribableValue} from '../../hooks';
 import {MetaFieldGroup} from './MetaFieldGroup';
-import {useCallback} from 'preact/hooks';
+import {useCallback, useState} from 'preact/hooks';
 
 export interface NumberMetaFieldViewProps {
   field: NumberMetaField;
@@ -10,15 +10,18 @@ export interface NumberMetaFieldViewProps {
 
 export function NumberMetaFieldView({field}: NumberMetaFieldViewProps) {
   const value = useSubscribableValue(field.onChanged);
+  const [fieldValue, setFieldValue] = useState(value);
   const presets = field.getPresets();
   const [handleDrag] = useDrag(
     useCallback(
       dx => {
-        field.set(value + dx);
+        setFieldValue(fieldValue + dx);
       },
-      [value],
+      [fieldValue],
     ),
-    null,
+    useCallback(() => {
+      field.set(fieldValue);
+    }, [field, fieldValue]),
     null,
     false,
   );
@@ -37,7 +40,7 @@ export function NumberMetaFieldView({field}: NumberMetaFieldViewProps) {
       ) : (
         <Input
           type="number"
-          value={value}
+          value={fieldValue}
           onChange={event => {
             field.set((event.target as HTMLInputElement).value);
           }}

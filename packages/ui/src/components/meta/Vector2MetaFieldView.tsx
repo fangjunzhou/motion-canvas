@@ -2,7 +2,7 @@ import {Input} from '../controls';
 import {useDrag, useSubscribableValue} from '../../hooks';
 import {Vector2MetaField} from '@motion-canvas/core/lib/meta';
 import {MetaFieldGroup} from './MetaFieldGroup';
-import {useCallback} from 'preact/hooks';
+import {useCallback, useState} from 'preact/hooks';
 
 export interface Vector2MetaFieldViewProps {
   field: Vector2MetaField;
@@ -10,25 +10,31 @@ export interface Vector2MetaFieldViewProps {
 
 export function Vector2MetaFieldView({field}: Vector2MetaFieldViewProps) {
   const value = useSubscribableValue(field.onChanged);
+  const [xValue, setXValue] = useState(value.x);
+  const [yValue, setYValue] = useState(value.y);
   const [handleDragX] = useDrag(
     useCallback(
       dx => {
-        field.set([value.x + dx, value.y]);
+        setXValue(xValue + dx);
       },
-      [value],
+      [xValue],
     ),
-    null,
+    useCallback(() => {
+      field.set([xValue, yValue]);
+    }, [field, xValue, yValue]),
     null,
     false,
   );
   const [handleDragY] = useDrag(
     useCallback(
       dx => {
-        field.set([value.x, value.y + dx]);
+        setYValue(yValue + dx);
       },
-      [value],
+      [yValue],
     ),
-    null,
+    useCallback(() => {
+      field.set([xValue, yValue]);
+    }, [field, xValue, yValue]),
     null,
     false,
   );
@@ -37,7 +43,7 @@ export function Vector2MetaFieldView({field}: Vector2MetaFieldViewProps) {
     <MetaFieldGroup field={field}>
       <Input
         type="number"
-        value={value.x}
+        value={xValue}
         onChange={event => {
           const x = parseInt((event.target as HTMLInputElement).value);
           field.set([x, value.y]);
@@ -46,7 +52,7 @@ export function Vector2MetaFieldView({field}: Vector2MetaFieldViewProps) {
       />
       <Input
         type="number"
-        value={value.y}
+        value={yValue}
         onChange={event => {
           const y = parseInt((event.target as HTMLInputElement).value);
           field.set([value.x, y]);
