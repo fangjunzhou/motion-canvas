@@ -9,6 +9,7 @@ import {Timeline} from './components/timeline';
 import {Console} from './components/console';
 import {
   Properties,
+  PropertiesEvent,
   Settings,
   Threads,
   VideoSettings,
@@ -37,6 +38,7 @@ export function Editor() {
             cases={{
               [EditorPanel.VideoSettings]: VideoSettings,
               [EditorPanel.Inspector]: Properties,
+              [EditorPanel.PropertyEvent]: PropertiesEvent,
               [EditorPanel.Threads]: Threads,
               [EditorPanel.Console]: Console,
               [EditorPanel.Settings]: Settings,

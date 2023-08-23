@@ -4,6 +4,7 @@ export * from './Bug';
 export * from './Clear';
 export * from './Close';
 export * from './DragIndicator';
+export * from './EventProperty';
 export * from './Fullscreen';
 export * from './Grid';
 export * from './Colorize';

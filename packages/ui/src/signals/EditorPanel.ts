@@ -1,6 +1,7 @@
 export enum EditorPanel {
   VideoSettings = 'video-settings-panel',
   Inspector = 'inspector-panel',
+  PropertyEvent = 'property-event-panel',
   Threads = 'threads-panel',
   Console = 'console-panel',
   Settings = 'settings-panel',

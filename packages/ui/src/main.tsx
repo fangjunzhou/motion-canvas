@@ -9,6 +9,7 @@ import {
   InspectionProvider,
   LoggerProvider,
   ApplicationProvider,
+  PropertyInspectionProvider,
 } from './contexts';
 import {getItem, setItem} from './utils';
 import {ShortcutsProvider} from './contexts/shortcuts';
@@ -105,7 +106,9 @@ export function editor(project: Project) {
       <ShortcutsProvider>
         <LoggerProvider>
           <InspectionProvider>
-            <Editor />
+            <PropertyInspectionProvider>
+              <Editor />
+            </PropertyInspectionProvider>
           </InspectionProvider>
         </LoggerProvider>
       </ShortcutsProvider>

@@ -8,6 +8,7 @@ import {
   AccountTree,
   Bug,
   Docs,
+  EventProperty,
   MotionCanvas,
   Movie,
   Settings,
@@ -75,6 +76,13 @@ export function Navigation() {
           tab={EditorPanel.Inspector}
         >
           <AccountTree />
+        </Tab>
+        <Tab
+          title="Property Event"
+          id="property-event-tab"
+          tab={EditorPanel.PropertyEvent}
+        >
+          <EventProperty />
         </Tab>
         <Tab title="Thread Debugger" id="threads-tab" tab={EditorPanel.Threads}>
           <ViewTimeline />
