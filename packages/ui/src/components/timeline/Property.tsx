@@ -2,11 +2,7 @@ import styles from './Timeline.module.scss';
 
 import type {Scene} from '@motion-canvas/core/lib/scenes';
 import type {PropertyEvent} from '@motion-canvas/core/lib/scenes/propertyEvents';
-import {
-  useApplication,
-  usePropertyInspection,
-  useTimelineContext,
-} from '../../contexts';
+import {usePropertyInspection, useTimelineContext} from '../../contexts';
 import {useCallback, useState} from 'preact/hooks';
 import {useDocumentEvent} from '../../hooks';
 
@@ -17,7 +13,6 @@ interface PropertyProps {
 
 export function Property({event, scene}: PropertyProps) {
   const {framesToPercents} = useTimelineContext();
-  const {player} = useApplication();
   const {setEvent, setScene} = usePropertyInspection();
 
   const [isPressing, setPressing] = useState(true);
@@ -42,11 +37,7 @@ export function Property({event, scene}: PropertyProps) {
       <div
         onMouseDown={e => {
           if (e.button === 0) {
-            // Seek to the property event.
             e.preventDefault();
-            player.requestSeek(
-              scene.firstFrame + player.status.secondsToFrames(event.time),
-            );
             setPressing(true);
             setEvent(event);
             setScene(scene);

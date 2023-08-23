@@ -33,8 +33,11 @@ export function PropertiesEvent() {
             }
 
             metaField.onChanged.subscribe(val => {
-              event.property[key] = val;
-              scene.reload();
+              const newProp = {
+                ...event.property,
+              };
+              newProp[key] = val;
+              scene.propertyEvents.set(event.name, newProp);
             });
 
             return <MetaFieldView field={metaField} />;
