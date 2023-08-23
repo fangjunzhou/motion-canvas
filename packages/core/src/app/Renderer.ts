@@ -8,6 +8,7 @@ import {Vector2} from '../types';
 import {PlaybackStatus} from './PlaybackStatus';
 import {Semaphore} from '../utils';
 import {ReadOnlyTimeEvents} from '../scenes/timeEvents';
+import {ReadOnlyPropertyEvents} from '../scenes/propertyEvents';
 
 export interface RendererSettings extends StageSettings {
   name: string;
@@ -78,6 +79,7 @@ export class Renderer {
         size: new Vector2(1920, 1080),
         resolutionScale: 1,
         timeEventsClass: ReadOnlyTimeEvents,
+        propertyEventsClass: ReadOnlyPropertyEvents,
       });
       scenes.push(scene);
     }

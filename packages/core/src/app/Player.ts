@@ -13,6 +13,7 @@ import {Vector2} from '../types';
 import {PlaybackStatus} from './PlaybackStatus';
 import {Semaphore} from '../utils';
 import {EditableTimeEvents} from '../scenes/timeEvents';
+import {EditablePropertyEvents} from '../scenes/propertyEvents';
 
 export interface PlayerState extends Record<string, unknown> {
   paused: boolean;
@@ -157,6 +158,7 @@ export class Player {
         size: this.size,
         resolutionScale: this.resolutionScale,
         timeEventsClass: EditableTimeEvents,
+        propertyEventsClass: EditablePropertyEvents,
       });
       description.onReplaced?.subscribe(description => {
         scene.reload(description);
