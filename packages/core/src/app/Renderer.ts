@@ -1,15 +1,16 @@
-import type { Project } from './Project';
-import type { Exporter } from './Exporter';
-import type { Scene } from '../scenes';
-import { PlaybackManager, PlaybackState } from './PlaybackManager';
-import { Stage, StageSettings } from './Stage';
-import { EventDispatcher, ValueDispatcher } from '../events';
-import { Vector2 } from '../types';
-import { PlaybackStatus } from './PlaybackStatus';
-import { Semaphore } from '../utils';
-import { ReadOnlyTimeEvents } from '../scenes/timeEvents';
-import { clampRemap } from '../tweening';
-import { TimeEstimator } from './TimeEstimator';
+import type {Project} from './Project';
+import type {Exporter} from './Exporter';
+import type {Scene} from '../scenes';
+import {PlaybackManager, PlaybackState} from './PlaybackManager';
+import {Stage, StageSettings} from './Stage';
+import {EventDispatcher, ValueDispatcher} from '../events';
+import {Vector2} from '../types';
+import {PlaybackStatus} from './PlaybackStatus';
+import {Semaphore} from '../utils';
+import {ReadOnlyTimeEvents} from '../scenes/timeEvents';
+import {clampRemap} from '../tweening';
+import {TimeEstimator} from './TimeEstimator';
+import {ReadOnlyPropertyEvents} from '../scenes/propertyEvents';
 
 export interface RendererSettings extends StageSettings {
   name: string;
