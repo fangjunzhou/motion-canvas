@@ -79,7 +79,11 @@ export class EditablePropertyEvents implements PropertyEvents {
 
     this.registeredEvents[name] = this.lookup[name];
 
-    return this.lookup[name].property as T;
+    if (typeof initialVal === 'object')
+      {Object.assign(initialVal as any, this.lookup[name].property);}
+    else initialVal = this.lookup[name].property;
+
+    return initialVal as T;
   }
 
   /**
@@ -133,7 +137,7 @@ export class EditablePropertyEvents implements PropertyEvents {
       const previous = this.lookup[event.name] ?? {
         name: event.name,
         time: 0,
-        property: {},
+        property: event.property,
       };
 
       this.lookup[event.name] = {
