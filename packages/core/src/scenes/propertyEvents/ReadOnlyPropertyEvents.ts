@@ -35,7 +35,7 @@ export class ReadOnlyPropertyEvents implements PropertyEvents {
       this.lookup.set(name, {
         name: name,
         time: initialTime,
-        property: property,
+        property: property as T,
       });
     }
 
