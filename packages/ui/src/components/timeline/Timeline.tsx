@@ -23,6 +23,7 @@ import {
 } from '../../contexts';
 import clsx from 'clsx';
 import {useShortcut} from '../../hooks/useShortcut';
+import {PropertyTrack} from './PropertyTrack';
 
 const ZOOM_SPEED = 0.1;
 const ZOOM_MIN = 0.5;
@@ -239,6 +240,7 @@ export function Timeline() {
               <div className={styles.trackContainer}>
                 <SceneTrack />
                 <LabelTrack />
+                <PropertyTrack />
                 <AudioTrack />
               </div>
               <Playhead />
