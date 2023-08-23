@@ -17,7 +17,7 @@ export interface PropertyEvents {
    * @param name - The name of the event.
    * @param property - The property object.
    */
-  set<T>(name: string, property: T): void;
+  set<T extends Record<string, any>>(name: string, property: T): void;
   /**
    * Register a property event.
    *
@@ -30,7 +30,7 @@ export interface PropertyEvents {
    *
    * @internal
    */
-  register<T extends object>(
+  register<T extends Record<string, any>>(
     name: string,
     initialTime: number,
     initialVal: T,

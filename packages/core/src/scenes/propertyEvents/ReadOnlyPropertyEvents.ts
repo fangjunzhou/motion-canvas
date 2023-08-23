@@ -21,7 +21,11 @@ export class ReadOnlyPropertyEvents implements PropertyEvents {
     // do nothing
   }
 
-  public register<T>(name: string, initialTime: number, initialVal: T): T {
+  public register<T extends Record<string, any>>(
+    name: string,
+    initialTime: number,
+    initialVal: T,
+  ): T {
     let property = this.lookup.get(name)?.property;
     if (property === undefined) {
       const event = this.scene.meta.propertyEvents
@@ -35,7 +39,16 @@ export class ReadOnlyPropertyEvents implements PropertyEvents {
       });
     }
 
-    return property as T;
+    Object.entries(initialVal).forEach(([key]) => {
+      if (typeof initialVal[key] === 'object') {
+        Object.assign(initialVal[key], this.lookup.get(name)?.property[key]);
+      } else {
+        (initialVal as Record<string, any>)[key] =
+          this.lookup.get(name)?.property[key];
+      }
+    });
+
+    return initialVal;
   }
 
   /**

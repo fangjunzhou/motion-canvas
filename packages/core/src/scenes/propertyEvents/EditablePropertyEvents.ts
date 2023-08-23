@@ -32,7 +32,7 @@ export class EditablePropertyEvents implements PropertyEvents {
     );
   }
 
-  public set(name: string, property: any) {
+  public set<T extends Record<string, any>>(name: string, property: T) {
     if (!this.lookup[name] || this.lookup[name].property === property) {
       return;
     }
@@ -46,7 +46,7 @@ export class EditablePropertyEvents implements PropertyEvents {
     this.scene.reload();
   }
 
-  public register<T extends object>(
+  public register<T extends Record<string, any>>(
     name: string,
     initialTime: number,
     initialVal: T,
@@ -73,12 +73,14 @@ export class EditablePropertyEvents implements PropertyEvents {
 
       // Event time change.
       if (event.time !== initialTime) {
+        this.didEventsChange = true;
         event.time = initialTime;
         changed = true;
       }
 
       // Property keys not fit.
       if (!this.compareKeys(event.property, initialVal)) {
+        this.didEventsChange = true;
         event.property = initialVal;
         changed = true;
       }
@@ -90,9 +92,17 @@ export class EditablePropertyEvents implements PropertyEvents {
 
     this.registeredEvents[name] = this.lookup[name];
 
-    Object.assign(initialVal, this.lookup[name].property);
+    Object.entries(initialVal).forEach(([key]) => {
+      if (typeof initialVal[key] === 'object') {
+        Object.assign(initialVal[key], this.lookup[name].property[key]);
+      } else {
+        (initialVal as Record<string, any>)[key] =
+          this.lookup[name].property[key];
+      }
+    });
+    this.lookup[name].property = initialVal;
 
-    return initialVal as T;
+    return initialVal;
   }
 
   private compareKeys(src: object, target: object) {
