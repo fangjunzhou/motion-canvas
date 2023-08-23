@@ -11,6 +11,7 @@ import type {LifecycleEvents} from './LifecycleEvents';
 import type {Random} from './Random';
 import type {SceneMetadata} from './SceneMetadata';
 import type {Slides} from './Slides';
+import {PropertyEvents} from './propertyEvents';
 
 /**
  * The constructor used when creating new scenes.
@@ -62,6 +63,7 @@ export interface FullSceneDescription<T = unknown> extends SceneDescription<T> {
   logger: Logger;
   onReplaced: ValueDispatcher<FullSceneDescription<T>>;
   timeEventsClass: new (scene: Scene) => TimeEvents;
+  propertyEventsClass: new (scene: Scene) => PropertyEvents;
 }
 
 /**
@@ -136,6 +138,7 @@ export interface Scene<T = unknown> {
    */
   readonly playback: PlaybackStatus;
   readonly timeEvents: TimeEvents;
+  readonly propertyEvents: PropertyEvents;
   readonly slides: Slides;
   readonly logger: Logger;
   readonly variables: Variables;

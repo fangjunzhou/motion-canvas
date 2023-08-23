@@ -25,3 +25,4 @@ export * from './useTime';
 export * from './useContext';
 export * from './useDuration';
 export * from './proxyUtils';
+export * from './useProperty';
