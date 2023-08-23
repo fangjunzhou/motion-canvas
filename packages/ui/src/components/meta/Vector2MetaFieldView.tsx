@@ -46,6 +46,7 @@ export function Vector2MetaFieldView({field}: Vector2MetaFieldViewProps) {
         value={xValue}
         onChange={event => {
           const x = parseInt((event.target as HTMLInputElement).value);
+          setXValue(x);
           field.set([x, value.y]);
         }}
         onMouseDown={handleDragX}
@@ -55,6 +56,7 @@ export function Vector2MetaFieldView({field}: Vector2MetaFieldViewProps) {
         value={yValue}
         onChange={event => {
           const y = parseInt((event.target as HTMLInputElement).value);
+          setYValue(y);
           field.set([value.x, y]);
         }}
         onMouseDown={handleDragY}

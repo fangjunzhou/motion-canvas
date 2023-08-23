@@ -42,6 +42,7 @@ export function NumberMetaFieldView({field}: NumberMetaFieldViewProps) {
           type="number"
           value={fieldValue}
           onChange={event => {
+            setFieldValue(parseFloat((event.target as HTMLInputElement).value));
             field.set((event.target as HTMLInputElement).value);
           }}
           onMouseDown={handleDrag}
