@@ -13,6 +13,7 @@ export function useDrag(
   onMove: MoveCallback,
   onDrop?: DropCallback,
   button: number | null = 0,
+  preventDefault = true,
 ): [(event: MouseEvent) => void, boolean] {
   const [isDragging, setDragging] = useState(false);
   const [startPosition, setStartPosition] = useState({x: 0, y: 0});
@@ -62,7 +63,7 @@ export function useDrag(
     (event: MouseEvent) => {
       if (button !== null && event.button !== button) return;
       // FIXME Calling this in Firefox prevents elements from receiving the `:active` pseudo class.
-      event.preventDefault();
+      if (preventDefault) event.preventDefault();
       event.stopPropagation();
       setStartPosition({x: event.x, y: event.y});
       setDragging(true);
