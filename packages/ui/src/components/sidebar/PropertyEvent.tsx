@@ -15,7 +15,7 @@ import {Separator} from '../controls';
 import {MetaFieldView} from '../meta';
 
 export function PropertiesEvent() {
-  const {event, scene} = usePropertyInspection();
+  const {event, setEvent, scene} = usePropertyInspection();
 
   return (
     <Pane title="Property Event Inspector" id="property-event-pane">
@@ -49,6 +49,11 @@ export function PropertiesEvent() {
                 ...event.property,
               };
               newProp[key] = val;
+              if (JSON.stringify(event.property) !== JSON.stringify(newProp))
+                {setEvent({
+                  ...event,
+                  property: newProp,
+                });}
               scene.propertyEvents.set(event.name, newProp);
             });
 
