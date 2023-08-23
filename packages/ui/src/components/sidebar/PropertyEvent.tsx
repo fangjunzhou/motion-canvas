@@ -50,6 +50,7 @@ export function PropertiesEvent() {
               };
               newProp[key] = val;
               scene.propertyEvents.set(event.name, newProp);
+              event.property = newProp;
             });
 
             return <MetaFieldView field={metaField} />;
