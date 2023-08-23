@@ -1,9 +1,13 @@
 import {Pane} from '../tabs';
 import {usePropertyInspection} from '../../contexts';
 import {
+  BoolMetaField,
+  Color,
+  ColorMetaField,
   isType,
   MetaField,
   NumberMetaField,
+  StringMetaField,
   Vector2,
   Vector2MetaField,
 } from '@motion-canvas/core';
@@ -25,11 +29,19 @@ export function PropertiesEvent() {
                   metaField = new Vector2MetaField(key, value as Vector2);
                   break;
 
+                case Color.symbol:
+                  metaField = new ColorMetaField(key, value as Color);
+                  break;
+
                 default:
                   break;
               }
             } else if (typeof value === 'number') {
               metaField = new NumberMetaField(key, value);
+            } else if (typeof value === 'boolean') {
+              metaField = new BoolMetaField(key, value);
+            } else if (typeof value === 'string') {
+              metaField = new StringMetaField(key, value);
             }
 
             metaField.onChanged.subscribe(val => {

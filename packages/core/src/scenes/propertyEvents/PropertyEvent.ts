@@ -14,5 +14,5 @@ export interface PropertyEvent {
   /**
    * Property of the event.
    */
-  property: any;
+  property: Record<string, any>;
 }
