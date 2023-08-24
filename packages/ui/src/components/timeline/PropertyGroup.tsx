@@ -19,7 +19,7 @@ export function PropertyGroup({scene}: PropertyGroupProps) {
     <>
       {isVisible &&
         events.map(event => (
-          <Property key={event.name} event={event} scene={scene} />
+          <Property key={event.property.name} event={event} scene={scene} />
         ))}
     </>
   );

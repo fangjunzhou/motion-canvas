@@ -44,7 +44,7 @@ export function Property({event, scene}: PropertyProps) {
           }
         }}
         className={styles.labelClip}
-        data-name={event.name}
+        data-name={event.property.name}
         style={{
           left: `${framesToPercents(
             scene.firstFrame + scene.playback.secondsToFrames(event.time),
