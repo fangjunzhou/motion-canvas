@@ -38,7 +38,7 @@ export class EditablePropertyEvents implements PropertyEvents {
 
   public set(name: string, property: any) {
     if (
-      !this.lookup[name] ||
+      !this.serializedRegisteredEvents[name] ||
       this.serializedRegisteredEvents[name].serializedProperty === property
     ) {
       return;
