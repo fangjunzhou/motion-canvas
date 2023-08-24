@@ -2,6 +2,7 @@ import type {Scene} from '../Scene';
 import type {PropertyEvent} from './PropertyEvent';
 import type {PropertyEvents} from './PropertyEvents';
 import {ValueDispatcher} from '../../events';
+import {MetaField} from '../../meta';
 
 /**
  * Manages property events during rendering and presentation.
@@ -21,34 +22,27 @@ export class ReadOnlyPropertyEvents implements PropertyEvents {
     // do nothing
   }
 
-  public register<T extends Record<string, any>>(
-    name: string,
+  public register<T extends MetaField<any>>(
     initialTime: number,
     initialVal: T,
   ): T {
+    const name = initialVal.name;
     let property = this.lookup.get(name)?.property;
     if (property === undefined) {
       const event = this.scene.meta.propertyEvents
         .get()
         .find(event => event.name === name);
-      property = event ? event.property : initialVal;
+      if (event) {
+        initialVal.set(event.serializedProperty);
+      }
+      property = initialVal;
       this.lookup.set(name, {
-        name: name,
         time: initialTime,
         property: property as T,
       });
     }
 
-    Object.entries(initialVal).forEach(([key]) => {
-      if (typeof initialVal[key] === 'object') {
-        Object.assign(initialVal[key], this.lookup.get(name)?.property[key]);
-      } else {
-        (initialVal as Record<string, any>)[key] =
-          this.lookup.get(name)?.property[key];
-      }
-    });
-
-    return initialVal;
+    return property as T;
   }
 
   /**

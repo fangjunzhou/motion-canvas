@@ -1,4 +1,5 @@
 import type {SubscribableValueEvent} from '../../events';
+import {MetaField} from '../../meta';
 import type {PropertyEvent} from './PropertyEvent';
 
 /**
@@ -14,14 +15,12 @@ export interface PropertyEvents {
   /**
    * Change the property value of the given event.
    *
-   * @param name - The name of the event.
    * @param property - The property object.
    */
-  set<T extends Record<string, any>>(name: string, property: T): void;
+  set<T extends MetaField<any>>(property: T): void;
   /**
    * Register a property event.
    *
-   * @param name - The name of the event.
    * @param initialTime - Time in seconds, relative to the beginning of the
    *                      scene, at which the event was registered.
    * @param initialVal - The default value of the property.
@@ -30,9 +29,5 @@ export interface PropertyEvents {
    *
    * @internal
    */
-  register<T extends Record<string, any>>(
-    name: string,
-    initialTime: number,
-    initialVal: T,
-  ): T;
+  register<T extends MetaField<any>>(initialTime: number, initialVal: T): T;
 }

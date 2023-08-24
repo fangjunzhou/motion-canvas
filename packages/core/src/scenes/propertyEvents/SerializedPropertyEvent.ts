@@ -7,7 +7,7 @@ export interface SerializedPropertyEvent {
    */
   name: string;
   /**
-   * {@inheritDoc PropertyEvent.property}
+   * {@inheritDoc PropertyEvent.targetTime}
    */
-  property: any;
+  serializedProperty: any;
 }

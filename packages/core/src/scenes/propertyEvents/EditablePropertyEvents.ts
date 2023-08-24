@@ -1,8 +1,9 @@
 import type {Scene} from '../Scene';
 import type {PropertyEvents} from './PropertyEvents';
 import type {PropertyEvent} from './PropertyEvent';
-import type {SerializedPropertyEvent} from './SerializedPropertyEvent';
 import {ValueDispatcher} from '../../events';
+import {MetaField} from '../../meta';
+import {SerializedPropertyEvent} from './SerializedPropertyEvent';
 
 /**
  * Manages time events during editing.
@@ -15,6 +16,7 @@ export class EditablePropertyEvents implements PropertyEvents {
 
   private registeredEvents: Record<string, PropertyEvent> = {};
   private lookup: Record<string, PropertyEvent> = {};
+  private lookupBuffer: Record<string, SerializedPropertyEvent> = {};
   private collisionLookup = new Set<string>();
   private previousReference: SerializedPropertyEvent[] = [];
   private didEventsChange = false;
@@ -32,7 +34,9 @@ export class EditablePropertyEvents implements PropertyEvents {
     );
   }
 
-  public set<T extends Record<string, any>>(name: string, property: T) {
+  public set<T extends MetaField<any>>(property: T) {
+    const name = property.name;
+
     if (!this.lookup[name] || this.lookup[name].property === property) {
       return;
     }
@@ -46,11 +50,12 @@ export class EditablePropertyEvents implements PropertyEvents {
     this.scene.reload();
   }
 
-  public register<T extends Record<string, any>>(
-    name: string,
+  public register<T extends MetaField<any>>(
     initialTime: number,
     initialVal: T,
   ): T {
+    const name = initialVal.name;
+
     if (this.collisionLookup.has(name)) {
       this.scene.logger.error({
         message: `name "${name}" has already been used for another event name.`,
@@ -61,15 +66,19 @@ export class EditablePropertyEvents implements PropertyEvents {
 
     this.collisionLookup.add(name);
     if (!this.lookup[name]) {
-      this.didEventsChange = true;
+      // Check serialization buffer.
+      if (this.lookupBuffer[name]) {
+        initialVal.set(this.lookupBuffer[name].serializedProperty);
+      } else {
+        this.didEventsChange = true;
+      }
       this.lookup[name] = {
-        name,
         time: initialTime,
         property: initialVal,
       };
     } else {
       let changed = false;
-      const event = {...this.lookup[name]};
+      const event = this.lookup[name];
 
       // Event time change.
       if (event.time !== initialTime) {
@@ -78,12 +87,7 @@ export class EditablePropertyEvents implements PropertyEvents {
         changed = true;
       }
 
-      // Property keys not fit.
-      if (!this.compareKeys(event.property, initialVal)) {
-        this.didEventsChange = true;
-        event.property = initialVal;
-        changed = true;
-      }
+      // TODO: MetaField structure changed.
 
       if (changed) {
         this.lookup[name] = event;
@@ -92,23 +96,7 @@ export class EditablePropertyEvents implements PropertyEvents {
 
     this.registeredEvents[name] = this.lookup[name];
 
-    Object.entries(initialVal).forEach(([key]) => {
-      if (typeof initialVal[key] === 'object') {
-        Object.assign(initialVal[key], this.lookup[name].property[key]);
-      } else {
-        (initialVal as Record<string, any>)[key] =
-          this.lookup[name].property[key];
-      }
-    });
-    this.lookup[name].property = initialVal;
-
-    return initialVal;
-  }
-
-  private compareKeys(src: object, target: object) {
-    const srcKeys = Object.keys(src).sort();
-    const targetKeys = Object.keys(target).sort();
-    return JSON.stringify(srcKeys) === JSON.stringify(targetKeys);
+    return this.lookup[name].property as T;
   }
 
   /**
@@ -132,8 +120,8 @@ export class EditablePropertyEvents implements PropertyEvents {
       this.didEventsChange = false;
       this.previousReference = Object.values(this.registeredEvents).map(
         event => ({
-          name: event.name,
-          property: event.property,
+          name: event.property.name,
+          serializedProperty: event.property.serialize(),
         }),
       );
       this.scene.meta.propertyEvents.set(this.previousReference);
@@ -159,15 +147,14 @@ export class EditablePropertyEvents implements PropertyEvents {
 
   private load(events: SerializedPropertyEvent[]) {
     for (const event of events) {
-      const previous = this.lookup[event.name] ?? {
-        name: event.name,
-        time: 0,
-        property: event.property,
-      };
-
-      this.lookup[event.name] = {
-        ...previous,
-      };
+      // If the value is not registered, save to the buffer for future deserialization.
+      if (!this.lookup[event.name]) {
+        this.lookupBuffer[event.name] = event;
+      }
+      // Deserialize.
+      else {
+        this.lookup[event.name].property.set(event);
+      }
     }
   }
 }
