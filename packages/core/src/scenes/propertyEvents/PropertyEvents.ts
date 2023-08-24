@@ -19,6 +19,14 @@ export interface PropertyEvents {
    */
   set<T extends MetaField<any>>(property: T): void;
   /**
+   * Force recalculate the scene.
+   */
+  updateScene(): void;
+  /**
+   * Force recalculate the scene and save meta data.
+   */
+  updateAndSaveScene(): void;
+  /**
    * Register a property event.
    *
    * @param initialTime - Time in seconds, relative to the beginning of the

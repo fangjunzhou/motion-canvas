@@ -50,6 +50,15 @@ export class EditablePropertyEvents implements PropertyEvents {
     this.scene.reload();
   }
 
+  public updateScene(): void {
+    this.scene.reload();
+  }
+
+  public updateAndSaveScene(): void {
+    this.didEventsChange = true;
+    this.scene.reload();
+  }
+
   public register<T extends MetaField<any>>(
     initialTime: number,
     initialVal: T,

@@ -22,6 +22,14 @@ export class ReadOnlyPropertyEvents implements PropertyEvents {
     // do nothing
   }
 
+  public updateScene(): void {
+    // do nothing
+  }
+
+  public updateAndSaveScene(): void {
+    // do nothing
+  }
+
   public register<T extends MetaField<any>>(
     initialTime: number,
     initialVal: T,
