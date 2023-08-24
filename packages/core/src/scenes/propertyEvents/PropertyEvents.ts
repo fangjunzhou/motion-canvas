@@ -15,17 +15,10 @@ export interface PropertyEvents {
   /**
    * Change the property value of the given event.
    *
-   * @param property - The property object.
+   * @param name - The name of the event.
+   * @param property - The serialized property object.
    */
-  set<T extends MetaField<any>>(property: T): void;
-  /**
-   * Force recalculate the scene.
-   */
-  updateScene(): void;
-  /**
-   * Force recalculate the scene and save meta data.
-   */
-  updateAndSaveScene(): void;
+  set(name: string, property: any): void;
   /**
    * Register a property event.
    *

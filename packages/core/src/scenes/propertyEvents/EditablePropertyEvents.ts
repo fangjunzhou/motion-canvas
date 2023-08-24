@@ -15,8 +15,10 @@ export class EditablePropertyEvents implements PropertyEvents {
   private readonly events = new ValueDispatcher<PropertyEvent[]>([]);
 
   private registeredEvents: Record<string, PropertyEvent> = {};
+  private serializedRegisteredEvents: Record<string, SerializedPropertyEvent> =
+    {};
   private lookup: Record<string, PropertyEvent> = {};
-  private lookupBuffer: Record<string, SerializedPropertyEvent> = {};
+  private serializedLookup: Record<string, SerializedPropertyEvent> = {};
   private collisionLookup = new Set<string>();
   private previousReference: SerializedPropertyEvent[] = [];
   private didEventsChange = false;
@@ -34,27 +36,22 @@ export class EditablePropertyEvents implements PropertyEvents {
     );
   }
 
-  public set<T extends MetaField<any>>(property: T) {
-    const name = property.name;
-
-    if (!this.lookup[name] || this.lookup[name].property === property) {
+  public set(name: string, property: any) {
+    if (
+      !this.lookup[name] ||
+      this.serializedRegisteredEvents[name].serializedProperty === property
+    ) {
       return;
     }
-    this.lookup[name] = {
-      ...this.lookup[name],
-      property,
+    this.serializedRegisteredEvents[name] = {
+      ...this.serializedRegisteredEvents[name],
+      serializedProperty: property,
     };
-    this.registeredEvents[name] = this.lookup[name];
+    this.serializedRegisteredEvents[name] = {
+      name: this.lookup[name].property.name,
+      serializedProperty: this.lookup[name].property.serialize(),
+    };
     this.events.current = Object.values(this.registeredEvents);
-    this.didEventsChange = true;
-    this.scene.reload();
-  }
-
-  public updateScene(): void {
-    this.scene.reload();
-  }
-
-  public updateAndSaveScene(): void {
     this.didEventsChange = true;
     this.scene.reload();
   }
@@ -76,8 +73,8 @@ export class EditablePropertyEvents implements PropertyEvents {
     this.collisionLookup.add(name);
     if (!this.lookup[name]) {
       // Check serialization buffer.
-      if (this.lookupBuffer[name]) {
-        initialVal.set(this.lookupBuffer[name].serializedProperty);
+      if (this.serializedLookup[name]) {
+        initialVal.set(this.serializedLookup[name].serializedProperty);
       } else {
         this.didEventsChange = true;
       }
@@ -96,14 +93,16 @@ export class EditablePropertyEvents implements PropertyEvents {
         changed = true;
       }
 
-      // TODO: MetaField structure changed.
-
       if (changed) {
         this.lookup[name] = event;
       }
     }
 
     this.registeredEvents[name] = this.lookup[name];
+    this.serializedRegisteredEvents[name] = {
+      name: this.lookup[name].property.name,
+      serializedProperty: this.lookup[name].property.serialize(),
+    };
 
     return this.lookup[name].property as T;
   }
@@ -127,12 +126,7 @@ export class EditablePropertyEvents implements PropertyEvents {
       (this.previousReference?.length ?? 0) !== this.events.current.length
     ) {
       this.didEventsChange = false;
-      this.previousReference = Object.values(this.registeredEvents).map(
-        event => ({
-          name: event.property.name,
-          serializedProperty: event.property.serialize(),
-        }),
-      );
+      this.previousReference = Object.values(this.serializedRegisteredEvents);
       this.scene.meta.propertyEvents.set(this.previousReference);
     }
   };
@@ -157,11 +151,9 @@ export class EditablePropertyEvents implements PropertyEvents {
   private load(events: SerializedPropertyEvent[]) {
     for (const event of events) {
       // If the value is not registered, save to the buffer for future deserialization.
-      if (!this.lookup[event.name]) {
-        this.lookupBuffer[event.name] = event;
-      }
+      this.serializedLookup[event.name] = event;
       // Deserialize.
-      else {
+      if (this.lookup[event.name]) {
         this.lookup[event.name].property.set(event);
       }
     }
