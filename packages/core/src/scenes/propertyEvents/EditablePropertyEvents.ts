@@ -47,10 +47,6 @@ export class EditablePropertyEvents implements PropertyEvents {
       ...this.serializedRegisteredEvents[name],
       serializedProperty: property,
     };
-    this.serializedRegisteredEvents[name] = {
-      name: this.lookup[name].property.name,
-      serializedProperty: this.lookup[name].property.serialize(),
-    };
     this.events.current = Object.values(this.registeredEvents);
     this.didEventsChange = true;
     this.scene.reload();
@@ -112,6 +108,7 @@ export class EditablePropertyEvents implements PropertyEvents {
    */
   private handleReload = () => {
     this.registeredEvents = {};
+    this.serializedRegisteredEvents = {};
     this.collisionLookup.clear();
   };
 
