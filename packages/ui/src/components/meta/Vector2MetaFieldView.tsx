@@ -57,7 +57,7 @@ export function Vector2MetaFieldView({
     ),
     useCallback(() => {
       if (finishEdit) {
-        finishEdit;
+        finishEdit();
       }
     }, []),
     null,
