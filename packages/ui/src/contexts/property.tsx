@@ -4,16 +4,16 @@ import {ComponentChildren, createContext} from 'preact';
 import {useContext, useMemo, useState} from 'preact/hooks';
 
 export interface PropertyInspectionState {
-  event: PropertyEvent | null;
+  events: PropertyEvent[] | null;
   scene: Scene | null;
-  setEvent: (event: PropertyEvent | null) => void;
+  setEvents: (event: PropertyEvent[] | null) => void;
   setScene: (scene: Scene | null) => void;
 }
 
 const PropertyInspectionContext = createContext<PropertyInspectionState>({
-  event: null,
+  events: null,
   scene: null,
-  setEvent: () => {
+  setEvents: () => {
     throw new Error('setEvent not implemented');
   },
   setScene: () => {
@@ -26,17 +26,17 @@ export function PropertyInspectionProvider({
 }: {
   children: ComponentChildren;
 }) {
-  const [event, setEvent] = useState<PropertyEvent | null>(null);
+  const [events, setEvents] = useState<PropertyEvent[] | null>(null);
   const [scene, setScene] = useState<Scene | null>(null);
 
   const state = useMemo(
     () => ({
-      event,
+      events,
       scene,
-      setEvent,
+      setEvents,
       setScene,
     }),
-    [event, scene],
+    [events, scene],
   );
 
   return (

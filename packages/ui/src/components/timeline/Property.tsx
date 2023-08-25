@@ -7,13 +7,14 @@ import {useCallback, useState} from 'preact/hooks';
 import {useDocumentEvent} from '../../hooks';
 
 interface PropertyProps {
-  event: PropertyEvent;
+  time: number;
+  events: PropertyEvent[];
   scene: Scene;
 }
 
-export function Property({event, scene}: PropertyProps) {
+export function Property({time, events, scene}: PropertyProps) {
   const {framesToPercents} = useTimelineContext();
-  const {setEvent, setScene} = usePropertyInspection();
+  const {setEvents, setScene} = usePropertyInspection();
 
   const [isPressing, setPressing] = useState(true);
   // Disable drop seek when press down.
@@ -39,15 +40,19 @@ export function Property({event, scene}: PropertyProps) {
           if (e.button === 0) {
             e.preventDefault();
             setPressing(true);
-            setEvent(event);
+            setEvents(events);
             setScene(scene);
           }
         }}
         className={styles.labelClip}
-        data-name={event.property.name}
+        data-name={
+          events.length === 1
+            ? events[0].property.name
+            : `${events[0].property.name} +${events.length - 1}`
+        }
         style={{
           left: `${framesToPercents(
-            scene.firstFrame + scene.playback.secondsToFrames(event.time),
+            scene.firstFrame + scene.playback.secondsToFrames(time),
           )}%`,
         }}
       />
@@ -55,7 +60,7 @@ export function Property({event, scene}: PropertyProps) {
         className={styles.labelClipTarget}
         style={{
           left: `${framesToPercents(
-            scene.firstFrame + scene.playback.secondsToFrames(event.time),
+            scene.firstFrame + scene.playback.secondsToFrames(time),
           )}%`,
         }}
       />
