@@ -1,11 +1,59 @@
 {
-  "version": 1,
+  "version": 0,
   "timeEvents": [
     {
       "name": "circle",
-      "targetTime": 3
+      "targetTime": 0
     }
   ],
-  "propertyEvents": [],
-  "seed": 3073416149
+  "propertyEvents": [
+    {
+      "name": "key-frame-1",
+      "serializedProperty": {
+        "scale": 100,
+        "move": {
+          "x": 500,
+          "y": 0
+        },
+        "demoObject": {
+          "objNumber": 3.14,
+          "objVector": {
+            "x": 3.14,
+            "y": 6.28
+          },
+          "nestedObject": {
+            "nestedNumber": 6.28
+          }
+        }
+      }
+    },
+    {
+      "name": "key-frame-2",
+      "serializedProperty": {
+        "scale": 100,
+        "move": {
+          "x": -500,
+          "y": 0
+        }
+      }
+    },
+    {
+      "name": "key-frame-2.5",
+      "serializedProperty": {
+        "scale2": 100,
+        "move2": {
+          "x": -500,
+          "y": 0
+        }
+      }
+    },
+    {
+      "name": "key-frame-3",
+      "serializedProperty": {
+        "text": "DEMO TEXT",
+        "fontSize": 100
+      }
+    }
+  ],
+  "seed": 2120045170
 }
