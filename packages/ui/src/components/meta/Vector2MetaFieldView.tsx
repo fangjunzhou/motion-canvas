@@ -3,6 +3,7 @@ import {MoveCallback, useDrag, useSubscribableValue} from '../../hooks';
 import {Vector2MetaField} from '@motion-canvas/core/lib/meta';
 import {MetaFieldGroup} from './MetaFieldGroup';
 import {useCallback, useLayoutEffect, useState} from 'preact/hooks';
+import {Vector2} from '@motion-canvas/core';
 
 export interface Vector2MetaFieldViewProps {
   field: Vector2MetaField;
@@ -16,24 +17,23 @@ export function Vector2MetaFieldView({
   onMove,
 }: Vector2MetaFieldViewProps) {
   const value = useSubscribableValue(field.onChanged);
-  const [xValue, setXValue] = useState(value.x);
-  const [yValue, setYValue] = useState(value.y);
+  const [vec2, setVec2] = useState(value);
 
   useLayoutEffect(() => {
-    setXValue(value.x);
-    setYValue(value.y);
+    setVec2(value);
   }, [value]);
 
   const [handleDragX] = useDrag(
     useCallback(
       (dx, dy, x, y) => {
-        field.set([value.x + dx, value.y]);
-        setXValue(field.get().x);
+        const newVec = vec2.addX(dx);
+        field.set(newVec);
+        setVec2(newVec);
         if (onMove) {
           onMove(dx, dy, x, y);
         }
       },
-      [xValue],
+      [vec2],
     ),
     useCallback(() => {
       if (finishEdit) {
@@ -46,13 +46,14 @@ export function Vector2MetaFieldView({
   const [handleDragY] = useDrag(
     useCallback(
       (dx, dy, x, y) => {
-        field.set([value.x, value.y + dx]);
-        setYValue(field.get().y);
+        const newVec = vec2.addY(dx);
+        field.set(newVec);
+        setVec2(newVec);
         if (onMove) {
           onMove(dx, dy, x, y);
         }
       },
-      [yValue],
+      [vec2],
     ),
     useCallback(() => {
       if (finishEdit) {
@@ -67,11 +68,11 @@ export function Vector2MetaFieldView({
     <MetaFieldGroup field={field}>
       <Input
         type="number"
-        value={xValue}
+        value={vec2.x}
         onChange={event => {
           const x = parseInt((event.target as HTMLInputElement).value);
-          setXValue(x);
-          field.set([x, value.y]);
+          setVec2(new Vector2(x, vec2.y));
+          field.set([x, vec2.y]);
           if (finishEdit) {
             finishEdit();
           }
@@ -80,11 +81,11 @@ export function Vector2MetaFieldView({
       />
       <Input
         type="number"
-        value={yValue}
+        value={vec2.y}
         onChange={event => {
           const y = parseInt((event.target as HTMLInputElement).value);
-          setYValue(y);
-          field.set([value.x, y]);
+          setVec2(new Vector2(vec2.x, y));
+          field.set([vec2.x, y]);
           if (finishEdit) {
             finishEdit();
           }
