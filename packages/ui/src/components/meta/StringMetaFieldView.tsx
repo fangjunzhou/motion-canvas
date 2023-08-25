@@ -5,9 +5,13 @@ import {MetaFieldGroup} from './MetaFieldGroup';
 
 export interface StringMetaFieldViewProps {
   field: StringMetaField;
+  finishEdit?: () => void;
 }
 
-export function StringMetaFieldView({field}: StringMetaFieldViewProps) {
+export function StringMetaFieldView({
+  field,
+  finishEdit,
+}: StringMetaFieldViewProps) {
   const value = useSubscribableValue(field.onChanged);
   const presets = field.getPresets();
 
@@ -18,6 +22,9 @@ export function StringMetaFieldView({field}: StringMetaFieldViewProps) {
           value={value}
           onChange={value => {
             field.set(value);
+            if (finishEdit) {
+              finishEdit();
+            }
           }}
           options={presets}
         />
@@ -26,6 +33,9 @@ export function StringMetaFieldView({field}: StringMetaFieldViewProps) {
           value={value}
           onChange={event => {
             field.set((event.target as HTMLInputElement).value);
+            if (finishEdit) {
+              finishEdit();
+            }
           }}
         />
       )}

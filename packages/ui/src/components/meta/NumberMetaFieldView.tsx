@@ -1,27 +1,44 @@
 import type {NumberMetaField} from '@motion-canvas/core/lib/meta';
 import {Input, InputSelect} from '../controls';
-import {useDrag, useSubscribableValue} from '../../hooks';
+import {MoveCallback, useDrag, useSubscribableValue} from '../../hooks';
 import {MetaFieldGroup} from './MetaFieldGroup';
-import {useCallback, useState} from 'preact/hooks';
+import {useCallback, useLayoutEffect, useState} from 'preact/hooks';
 
 export interface NumberMetaFieldViewProps {
   field: NumberMetaField;
+  finishEdit?: () => void;
+  onMove?: MoveCallback;
 }
 
-export function NumberMetaFieldView({field}: NumberMetaFieldViewProps) {
+export function NumberMetaFieldView({
+  field,
+  finishEdit,
+  onMove,
+}: NumberMetaFieldViewProps) {
   const value = useSubscribableValue(field.onChanged);
   const [fieldValue, setFieldValue] = useState(value);
   const presets = field.getPresets();
+
+  useLayoutEffect(() => {
+    setFieldValue(value);
+  }, [value]);
+
   const [handleDrag] = useDrag(
     useCallback(
-      dx => {
-        setFieldValue(fieldValue + dx);
+      (dx, dy, x, y) => {
+        field.set(value + dx);
+        setFieldValue(field.get());
+        if (onMove) {
+          onMove(dx, dy, x, y);
+        }
       },
-      [fieldValue],
+      [field, fieldValue],
     ),
     useCallback(() => {
-      field.set(fieldValue);
-    }, [field, fieldValue]),
+      if (finishEdit) {
+        finishEdit();
+      }
+    }, []),
     null,
     false,
   );
@@ -31,9 +48,13 @@ export function NumberMetaFieldView({field}: NumberMetaFieldViewProps) {
       {presets.length ? (
         <InputSelect
           type="number"
-          value={value}
+          value={fieldValue}
           onChange={value => {
+            setFieldValue(value);
             field.set(value);
+            if (finishEdit) {
+              finishEdit();
+            }
           }}
           options={presets}
         />
@@ -44,6 +65,7 @@ export function NumberMetaFieldView({field}: NumberMetaFieldViewProps) {
           onChange={event => {
             setFieldValue(parseFloat((event.target as HTMLInputElement).value));
             field.set((event.target as HTMLInputElement).value);
+            finishEdit();
           }}
           onMouseDown={handleDrag}
         />

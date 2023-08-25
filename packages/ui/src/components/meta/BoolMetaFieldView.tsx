@@ -5,9 +5,10 @@ import {MetaFieldGroup} from './MetaFieldGroup';
 
 export interface BoolMetaFieldViewProps {
   field: BoolMetaField;
+  finishEdit?: () => void;
 }
 
-export function BoolMetaFieldView({field}: BoolMetaFieldViewProps) {
+export function BoolMetaFieldView({field, finishEdit}: BoolMetaFieldViewProps) {
   const value = useSubscribableValue(field.onChanged);
 
   return (
@@ -16,6 +17,9 @@ export function BoolMetaFieldView({field}: BoolMetaFieldViewProps) {
         checked={value}
         onChange={() => {
           field.set(!value);
+          if (finishEdit) {
+            finishEdit();
+          }
         }}
       />
     </MetaFieldGroup>

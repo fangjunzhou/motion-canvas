@@ -6,9 +6,13 @@ import {useState} from 'preact/hooks';
 
 export interface ColorMetaFieldViewProps {
   field: ColorMetaField;
+  finishEdit?: () => void;
 }
 
-export function ColorMetaFieldView({field}: ColorMetaFieldViewProps) {
+export function ColorMetaFieldView({
+  field,
+  finishEdit,
+}: ColorMetaFieldViewProps) {
   const value = useSubscribableValue(field.onChanged);
   const [force, setForce] = useState(0);
 
@@ -21,6 +25,9 @@ export function ColorMetaFieldView({field}: ColorMetaFieldViewProps) {
           // Force re-render in case the initial color was the same as the
           // previous one.
           setForce(force + 1);
+          if (finishEdit) {
+            finishEdit();
+          }
         }}
       />
     </MetaFieldGroup>

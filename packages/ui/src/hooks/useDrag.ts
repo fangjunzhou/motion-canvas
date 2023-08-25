@@ -1,11 +1,11 @@
 import {useCallback, useState} from 'preact/hooks';
 import {useDocumentEvent} from './useDocumentEvent';
 
-interface MoveCallback {
+export interface MoveCallback {
   (dx: number, dy: number, x: number, y: number): void;
 }
 
-interface DropCallback {
+export interface DropCallback {
   (event: MouseEvent): void;
 }
 

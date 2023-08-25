@@ -10,9 +10,13 @@ import {MetaFieldGroup} from './MetaFieldGroup';
 
 export interface RangeMetaFieldViewProps {
   field: RangeMetaField;
+  finishEdit?: () => void;
 }
 
-export function RangeMetaFieldView({field}: RangeMetaFieldViewProps) {
+export function RangeMetaFieldView({
+  field,
+  finishEdit,
+}: RangeMetaFieldViewProps) {
   const {player} = useApplication();
   const duration = useDuration();
   const range = useSubscribableValue(field.onChanged);
@@ -35,6 +39,9 @@ export function RangeMetaFieldView({field}: RangeMetaFieldViewProps) {
             start = 0;
           }
           field.update(start, endFrame, duration, fps);
+          if (finishEdit) {
+            finishEdit();
+          }
         }}
       />
       <Input
@@ -49,6 +56,9 @@ export function RangeMetaFieldView({field}: RangeMetaFieldViewProps) {
             end = Infinity;
           }
           field.update(startFrame, end, duration, fps);
+          if (finishEdit) {
+            finishEdit();
+          }
         }}
       />
     </MetaFieldGroup>

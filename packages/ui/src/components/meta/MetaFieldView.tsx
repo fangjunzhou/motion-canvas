@@ -11,14 +11,20 @@ import {UnknownMetaFieldView} from './UnknownMetaFieldView';
 import {RangeMetaFieldView} from './RangeMetaFieldView';
 import {EnumMetaField, RangeMetaField} from '@motion-canvas/core/lib/meta';
 import {Color, Vector2} from '@motion-canvas/core/lib/types';
-import {useSubscribableValue} from '../../hooks';
+import {MoveCallback, useSubscribableValue} from '../../hooks';
 import {Separator} from '../controls';
 
 interface MetaFieldViewProps {
   field: MetaField<any>;
+  finishEdit?: () => void;
+  onMove?: MoveCallback;
 }
 
-type FiledView = FunctionComponent<{field: MetaField<any>}>;
+type FiledView = FunctionComponent<{
+  field: MetaField<any>;
+  finishEdit?: () => void;
+  onMove?: MoveCallback;
+}>;
 
 const TYPE_MAP = new Map<any, FiledView>([
   [Boolean, BoolMetaFieldView],
@@ -31,7 +37,7 @@ const TYPE_MAP = new Map<any, FiledView>([
   [Object, ObjectMetaFieldView],
 ]);
 
-export function MetaFieldView({field}: MetaFieldViewProps) {
+export function MetaFieldView({field, finishEdit, onMove}: MetaFieldViewProps) {
   const Field: FiledView = TYPE_MAP.get(field.type) ?? UnknownMetaFieldView;
   const disabled = useSubscribableValue(field.onDisabled);
 
@@ -40,7 +46,7 @@ export function MetaFieldView({field}: MetaFieldViewProps) {
   ) : (
     <>
       {field.spacing && <Separator />}
-      <Field field={field} />
+      <Field field={field} finishEdit={finishEdit} onMove={onMove} />
     </>
   );
 }
