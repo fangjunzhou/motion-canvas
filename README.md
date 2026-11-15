@@ -54,6 +54,51 @@ Node 20.19 or newer is required. After cloning the repo, run `pnpm install` in
 the root of the project to install all necessary dependencies. Then run
 `pnpm run build` to build all the packages.
 
+### Developing with Nix
+
+With [Nix](https://nixos.org/download/) and flakes enabled, enter the
+development shell from the repository root:
+
+```bash
+nix develop
+pnpm install --frozen-lockfile
+pnpm run build
+```
+
+The shell provides Node 22 and Corepack's pnpm shims on Linux x86_64 and macOS
+(Intel and Apple Silicon). Corepack uses the pnpm version pinned in
+`package.json` and may download it on first use. Entering the shell does not
+install project dependencies.
+
+Intel macOS uses Nixpkgs 26.05 because the unstable branch no longer supports
+that platform.
+
+If you use [direnv](https://direnv.net/) with Nix integration, run
+`direnv allow` once to load the shell automatically when entering the
+repository. E2E tests continue to use the existing Playwright or Docker setup.
+
+#### Static demo
+
+Build the official homepage and documentation site, including the interactive
+demos:
+
+```bash
+nix build .#doc
+```
+
+The `result/` directory contains the static site. Its sandboxed playground needs
+CORS headers from the web server. To build and serve the demo with those headers
+at <http://127.0.0.1:8000>, run:
+
+```bash
+nix run .#doc
+```
+
+The online editor demo is available at <http://127.0.0.1:8000/editor/>.
+
+Pass a different port with `nix run .#doc -- 8080`. The demo is also the default
+output, so `nix build` and `nix run` work without specifying `.#doc`.
+
 ### Developing Editor
 
 When developing the editor, run the following command:
