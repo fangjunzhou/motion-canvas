@@ -25,8 +25,7 @@ class CanvasCommonsPlayer extends HTMLElement {
   }
 
   private get auto() {
-    const attr = this.getAttribute('auto');
-    return !!attr;
+    return this.hasAttribute('auto');
   }
 
   private get hover() {
