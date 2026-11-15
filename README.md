@@ -99,6 +99,22 @@ The online editor demo is available at <http://127.0.0.1:8000/editor/>.
 Pass a different port with `nix run .#doc -- 8080`. The demo is also the default
 output, so `nix build` and `nix run` work without specifying `.#doc`.
 
+### Deploying documentation to GitHub Pages
+
+In your fork's **Settings → Pages**, select **GitHub Actions** as the build and
+deployment source. Enable workflows in the **Actions** tab if GitHub has
+disabled them for the fork.
+
+The **Deploy Documentation to GitHub Pages** workflow deploys on pushes to
+`main` and can also be run manually from the Actions tab. It publishes to the
+current repository using `GITHUB_TOKEN`; no deploy key is required. For this
+fork, the site is served at <https://fangjunzhou.github.io/motion-canvas/>.
+
+The workflow obtains the site URL and base path from GitHub Pages and omits the
+upstream custom domain. For a local build with the same paths, set
+`DOCS_URL=https://fangjunzhou.github.io` and `DOCS_BASE_URL=/motion-canvas/`
+when running the build commands above.
+
 ### Developing Editor
 
 When developing the editor, run the following command:

@@ -3,6 +3,7 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig({
+  base: `${process.env.DOCS_BASE_URL ?? '/'}examples/`,
   plugins: [
     canvasCommons({
       project: [

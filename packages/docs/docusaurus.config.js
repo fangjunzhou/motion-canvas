@@ -5,8 +5,8 @@ const config = {
   title: 'Canvas Commons',
   tagline:
     'A TypeScript framework for creating animations with code. Write animations with JSX and generators.',
-  url: 'https://canvascommons.io',
-  baseUrl: '/',
+  url: process.env.DOCS_URL ?? 'https://canvascommons.io',
+  baseUrl: process.env.DOCS_BASE_URL ?? '/',
   onBrokenLinks: 'throw',
   onBrokenAnchors: 'throw',
   favicon: 'img/favicon.svg',

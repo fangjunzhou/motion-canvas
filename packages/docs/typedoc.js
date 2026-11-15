@@ -13,7 +13,7 @@ const mdn = require('mdn-links');
 const fs = require('fs');
 const {validateFiddleComment} = require('./remark-fiddle');
 
-module.exports = () => ({
+module.exports = context => ({
   name: 'docusaurus-typedoc-plugin',
   async loadContent() {
     const dir = './src/generated';
@@ -135,12 +135,12 @@ module.exports = () => ({
 
     for (const [id, lookup] of Object.entries(content)) {
       actions.addRoute({
-        path: lookup[id].url,
+        path: `${context.siteConfig.baseUrl}${lookup[id].url.slice(1)}`,
         component: '@site/src/components/Api/ApiPage.tsx',
         routes: Object.values(lookup)
           .filter(reflection => reflection.hasOwnPage)
           .map(reflection => ({
-            path: reflection.url,
+            path: `${context.siteConfig.baseUrl}${reflection.url.slice(1)}`,
             component: '@site/src/components/Api/ApiItem.tsx',
             exact: true,
             sidebar: 'api',
