@@ -1,4 +1,5 @@
 import Link from '@docusaurus/Link';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import React from 'react';
 import CommandBox from './CommandBox';
@@ -6,6 +7,7 @@ import HomeReel from './HomeReel';
 import styles from './styles.module.css';
 
 export default function Hero() {
+  const editorUrl = useBaseUrl('/editor/');
   const {siteConfig} = useDocusaurusContext();
   const discordUrl = siteConfig.customFields?.discordUrl as string;
 
@@ -27,6 +29,10 @@ export default function Hero() {
             <Link className={styles.ctaPrimary} to="/docs">
               Get Started <span className={styles.ctaArrow}>→</span>
             </Link>
+            <span className={styles.ctaSep}>·</span>
+            <a className={styles.ctaPrimary} href={editorUrl}>
+              Try the editor <span className={styles.ctaArrow}>→</span>
+            </a>
             <span className={styles.ctaSep}>·</span>
             <a className={styles.ctaLink} href={discordUrl}>
               Discuss on Discord

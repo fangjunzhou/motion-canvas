@@ -1,3 +1,4 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import clsx from 'clsx';
 import React from 'react';
 import styles from './styles.module.css';
@@ -13,6 +14,8 @@ function clip(color: string, flex: number, faded = false) {
 }
 
 export default function EditorTimeline() {
+  const editorUrl = useBaseUrl('/editor/');
+
   return (
     <section className={styles.section}>
       <div
@@ -26,6 +29,9 @@ export default function EditorTimeline() {
             your browser. Tweak with the browser and see your changes in real
             time.
           </p>
+          <a className={styles.ctaPrimary} href={editorUrl}>
+            Try the editor <span className={styles.ctaArrow}>→</span>
+          </a>
         </div>
         <div className={styles.frame}>
           <div className={styles.frameBar}>

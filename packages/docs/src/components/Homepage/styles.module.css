@@ -79,8 +79,7 @@
 .heroReel {
   /* A 16:9 box sized to the hero height, so the reel never runs full width. */
   position: absolute;
-  inset: 0;
-  margin: auto;
+  inset: 0 0 0 auto;
   display: block;
   height: 100%;
   width: auto;
