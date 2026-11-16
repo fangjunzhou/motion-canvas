@@ -49,9 +49,10 @@ export class DependencyContext<TOwner = void> implements Promisable<
   }
 
   public static async consumePromises() {
-    const promises = [...this.promises];
+    // Claim resources before awaiting them so another playback instance cannot
+    // mistake resources already being awaited for an unyielded dependency.
+    const promises = this.promises.splice(0);
     await Promise.all(promises.map(handle => handle.promise));
-    this.promises = this.promises.filter(v => !promises.includes(v));
     return promises;
   }
 
