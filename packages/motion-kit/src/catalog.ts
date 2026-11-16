@@ -222,5 +222,23 @@ export const catalog: CatalogDefinition = {
       example: 'examples/chart.tsx',
       preview: true,
     },
+    {
+      name: 'list',
+      title: 'List',
+      description:
+        'Shape-marked lists with wrapping labels and staggered native entrances.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/List.ts',
+          target: 'src/components/motion/components/List.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['theme', 'effects'],
+      documentation: 'documentation/list.md',
+      example: 'examples/list.tsx',
+      preview: true,
+    },
   ],
 };
