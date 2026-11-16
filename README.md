@@ -65,10 +65,20 @@ pnpm install --frozen-lockfile
 pnpm run build
 ```
 
-The shell provides Node 22 and Corepack's pnpm shims on Linux x86_64 and macOS
-(Intel and Apple Silicon). Corepack uses the pnpm version pinned in
+The shell provides Node 22, Prettier, and Corepack's pnpm shims on Linux x86_64
+and macOS (Intel and Apple Silicon). Corepack uses the pnpm version pinned in
 `package.json` and may download it on first use. Entering the shell does not
 install project dependencies.
+
+After installing dependencies, the shell prefers tools from the repository's
+`node_modules/.bin`. This makes `prettier` use the project's pinned version and
+its import-organizing plugin. Launch Neovim from inside the shell so Neoformat
+can find it on `PATH`:
+
+```bash
+nix develop
+nvim .
+```
 
 Intel macOS uses Nixpkgs 26.05 because the unstable branch no longer supports
 that platform.

@@ -82,7 +82,11 @@
             packages = [
               pkgs.nodejs_22
               pkgs.corepack
+              pkgs.prettier
             ];
+            shellHook = ''
+              export PATH="$PWD/node_modules/.bin:$PATH"
+            '';
           };
           packages.doc = demo;
           packages.default = demo;
