@@ -27,6 +27,13 @@ export interface CardImageSample {
 }
 
 export interface CardMotionProbe {
+  visibleTextInside: boolean;
+  imageLayout: {
+    resizing: boolean;
+    positions: number[][];
+    textPositions: number[][];
+    textOpacity: number;
+  }[];
   optionalParts: {
     full: number;
     withoutDescription: number;
@@ -42,6 +49,9 @@ export interface CardMotionProbe {
     footerY: number;
     stationary: boolean;
     automaticHeight: boolean;
+    progress: number;
+    curveX: number;
+    curveInside: boolean;
   }[];
   styles: Record<
     string,

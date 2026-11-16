@@ -34,7 +34,7 @@ inherit their semantic colors from the nearest card.
 | `theme`            | `defaultTheme` (Mocha)                                        | Reactive theme for surfaces, typography, and parts.                     |
 | `variant`          | `"default"`                                                   | `"sm"` selects small padding and gap tokens.                            |
 | `spacing`          | Theme `padding.medium` (32), or `padding.small` (16) for `sm` | Insets and footer padding; an explicit value also sets the section gap. |
-| Native `RectProps` | Vertical layout, clipped, rounded, 2-unit border              | Dimensions, transforms, layout, styling, and children.                  |
+| Native `RectProps` | Vertical layout, clipped, square corners, no outline          | Dimensions, transforms, layout, styling, and children.                  |
 
 The reference's `size="sm"` becomes `variant="sm"` because native `size`
 controls the scene node's dimensions. The `spacing` signal defaults to the
@@ -43,6 +43,11 @@ theme's padding token. Section gaps use `theme.spacing.medium`, or `small` for
 to both insets and section gaps, as a number or a core signal binding. Explicit
 `gap`, `padding`, and per-side padding props override their corresponding
 defaults.
+
+Cards have square corners and no outline by default. Set `radius` or
+`theme.radius.medium` to round the corners. Set `stroke={theme.colors.border}`
+to add one; the default `lineWidth` is 2. Native stroke and line width signals
+remain available for overrides and animation.
 
 Titles use `theme.typography.title` (54), content uses `body` (48), and footer
 text uses `caption` (30). Native `fontSize` props override these defaults.
@@ -78,7 +83,7 @@ is the card's full width and 320 scene units high.
 `fit="cover"` fills the frame and crops the image while preserving its aspect
 ratio. `fit="contain"` shows the whole image, with the frame's fill visible at
 the edges. Both modes use the frame's dimensions; changing source does not
-stretch the image. The card clips the image to its rounded corners and keeps the
+stretch the image. The card clips the image to its shape and keeps any explicit
 border visible.
 
 Set `visible={false}` to start without an image or its layout space. Use
@@ -179,3 +184,14 @@ has loaded. Part opacity bindings and temporary size overrides are restored if a
 method is cancelled; text already committed by `changeText` and visibility
 already set by a footer transition stay in place. The scene controls replay and
 seeking, as with other native animations.
+
+## Wipe entrance
+
+`swipeIn(duration?, easing?)` covers the card surface with the theme accent,
+then starts each image and text wipe in reading order, with a short interval
+between starts. The interval is `theme.motion.short / 2` (0.1 seconds by
+default) and shortens when needed to fit the supplied duration. The duration
+covers the surface and all section wipes. It changes visibility without
+animating padding or gaps. The shared `effects` registry item supplies the wipe
+implementation. Repeating or running with zero duration is supported. Cancelling
+removes any cover and restores the original opacity bindings.

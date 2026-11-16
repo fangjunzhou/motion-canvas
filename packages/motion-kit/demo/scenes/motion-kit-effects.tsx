@@ -9,7 +9,6 @@ import {
 } from '../../registry/components/Card';
 import {ContentSlide} from '../../registry/components/Slide';
 import {
-  colorSwipe,
   flashIn,
   flashOut,
   pushIn,
@@ -106,10 +105,7 @@ export default makeScene2D(function* (view) {
     easing: theme.motion.enter,
     offset: [0, theme.spacing.medium],
   });
-  yield* colorSwipe(first(), {
-    duration: theme.motion.long * 2,
-    colors: [theme.colors.accent],
-  });
+  yield* first().swipeIn(theme.motion.long * 2);
   yield* waitFor(theme.motion.medium);
   yield* flashOut(label(), {duration: theme.motion.medium});
   yield* rectTransform(first(), second(), {

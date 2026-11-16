@@ -10,22 +10,24 @@ import {
   CardTitle,
 } from '../../registry/components/Card';
 import {ContentSlide} from '../../registry/components/Slide';
-import {defaultTheme} from '../../registry/foundations/theme';
 import cornellBox from '../assets/cornell-box.png';
 import stanfordBunny from '../assets/stanford-bunny.png';
+import {fitSlide} from '../layout';
+import {demoTheme} from '../theme';
 
 export default makeScene2D(function* (view) {
-  const theme = defaultTheme;
+  const theme = demoTheme;
 
   const stage = createRef<ContentSlide>();
   const card = createRef<Card>();
 
-  view.fill(defaultTheme.colors.background);
+  view.fill(theme.colors.background);
   view.add(
     <ContentSlide
       ref={stage}
+      theme={theme}
       opacity={0}
-      size={() => view.size()}
+      {...fitSlide(view)}
       title="Card"
       subtitle="Use a card to group related information in a scene."
     >
@@ -59,11 +61,7 @@ export default makeScene2D(function* (view) {
     </ContentSlide>,
   );
 
-  yield* stage().opacity(
-    1,
-    defaultTheme.motion.medium,
-    defaultTheme.motion.enter,
-  );
+  yield* stage().opacity(1, theme.motion.medium, theme.motion.enter);
   yield* card().enter(1.2);
   yield* waitFor(0.8);
   yield* card().showFooter(0.8);
@@ -112,9 +110,5 @@ export default makeScene2D(function* (view) {
     1.2,
   );
   yield* waitFor(2);
-  yield* stage().opacity(
-    0,
-    defaultTheme.motion.medium,
-    defaultTheme.motion.exit,
-  );
+  yield* stage().opacity(0, theme.motion.medium, theme.motion.exit);
 });

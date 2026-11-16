@@ -6,6 +6,7 @@ import {
   waitFor,
   type ThreadGenerator,
 } from '@canvas-commons/core';
+import cardDemo from '../../../motion-kit/demo/scenes/motion-kit-card';
 import composition from '../../../motion-kit/demo/scenes/motion-kit-composition';
 import example from '../../../motion-kit/examples/card';
 import {Badge} from '../../../motion-kit/registry/components/Badge';
@@ -18,6 +19,8 @@ import {
   CardImage,
   CardTitle,
 } from '../../../motion-kit/registry/components/Card';
+import {Chart, ChartLine} from '../../../motion-kit/registry/components/Chart';
+import {Progress} from '../../../motion-kit/registry/components/Progress';
 import {
   createTheme,
   defaultTheme,
@@ -158,13 +161,22 @@ export default makeScene2D(function* (view) {
     })(),
     (function* (): ThreadGenerator {
       while (composing) {
-        const footer = descendants(view).find(
-          node => node instanceof CardFooter,
-        );
+        const nodes = descendants(view);
+        const footer = nodes.find(node => node instanceof CardFooter);
         const status = footer?.children().find(node => node instanceof Badge);
         const panel = footer?.parent();
-        if (!footer || !status || !(panel instanceof Card)) {
-          throw new Error('The composition is missing its status footer.');
+        const curve = nodes.find(node => node instanceof ChartLine);
+        const progress = nodes.find(node => node instanceof Progress);
+        const chart = curve?.parent();
+        if (
+          !footer ||
+          !status ||
+          !(panel instanceof Card) ||
+          !curve ||
+          !progress ||
+          !(chart instanceof Chart)
+        ) {
+          throw new Error('The composition is missing a required part.');
         }
         badgeLayout.push({
           text: status.text(),
@@ -172,7 +184,80 @@ export default makeScene2D(function* (view) {
           footerY: footer.absolutePosition().y,
           stationary: panel.scale().equals(Vector2.one),
           automaticHeight: status.height.isInitial(),
+          progress: progress.value() / 100,
+          curveX:
+            curve.getPointAtPercentage(curve.end()).position.x / chart.width() +
+            0.5,
+          curveInside: curve
+            .cacheBBox()
+            .transformCorners(
+              panel.worldToLocal().multiply(curve.localToWorld()),
+            )
+            .every(
+              point =>
+                Math.abs(point.x) < panel.width() / 2 &&
+                Math.abs(point.y) < panel.height() / 2,
+            ),
         });
+        yield;
+      }
+    })(),
+  );
+  for (const node of view.children()) {
+    node.remove();
+    node.dispose();
+  }
+
+  const imageLayout: CardMotionProbe['imageLayout'] = [];
+  let visibleTextInside = true;
+  let demonstrating = true;
+  yield* all(
+    (function* (): ThreadGenerator {
+      yield* cardDemo.config(view);
+      demonstrating = false;
+    })(),
+    (function* (): ThreadGenerator {
+      while (demonstrating) {
+        const nodes = descendants(view);
+        const card = nodes.find(node => node instanceof Card);
+        const image = nodes.find(node => node instanceof CardImage);
+        const header = nodes.find(node => node instanceof CardHeader);
+        const title = nodes.find(node => node instanceof CardTitle);
+        const description = nodes.find(node => node instanceof CardDescription);
+        if (card && card.opacity() > 0 && title && description) {
+          visibleTextInside &&= [title, description]
+            .filter(node => node.opacity() > 0)
+            .every(node =>
+              node
+                .cacheBBox()
+                .transformCorners(
+                  card.worldToLocal().multiply(node.localToWorld()),
+                )
+                .every(
+                  point =>
+                    Math.abs(point.x) <= card.width() / 2 &&
+                    Math.abs(point.y) <= card.height() / 2,
+                ),
+            );
+        }
+        if (
+          card &&
+          image &&
+          header &&
+          title &&
+          description?.text() === 'Stanford bunny'
+        ) {
+          imageLayout.push({
+            resizing: !card.height.isInitial(),
+            positions: [card, image, header].map(node =>
+              Vector2.zero.transformAsPoint(node.localToWorld()).toArray(),
+            ),
+            textPositions: [title, description].map(node =>
+              Vector2.zero.transformAsPoint(node.localToWorld()).toArray(),
+            ),
+            textOpacity: Math.max(title.opacity(), description.opacity()),
+          });
+        }
         yield;
       }
     })(),
@@ -358,6 +443,8 @@ export default makeScene2D(function* (view) {
   yield* waitFor(0.1);
   const imageCancelled = imageSnapshot('cancelled');
   Published.resolve({
+    visibleTextInside,
+    imageLayout,
     optionalParts,
     badgeLayout,
     styles,

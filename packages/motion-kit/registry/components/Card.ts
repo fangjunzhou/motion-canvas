@@ -19,6 +19,7 @@ import {
   Spacing,
   Vector2,
   all,
+  sequence,
   tween,
   type Signal,
   type SignalValue,
@@ -27,6 +28,7 @@ import {
   type TimingFunction,
 } from '@canvas-commons/core';
 import {defaultTheme, type MotionTheme} from '../foundations/theme';
+import {colorSwipe} from '../motion/effects';
 
 /** Card density. Native `size` continues to control the node's dimensions. */
 export type CardVariant = 'default' | 'sm';
@@ -229,6 +231,52 @@ export class Card extends Rect {
       }
     } finally {
       for (const part of parts) part.restore();
+    }
+  }
+
+  /**
+   * Wipe in the surface, then stagger image and text wipes in reading order.
+   * The whole sequence uses the supplied duration and leaves layout unchanged.
+   * @example
+   * ```ts
+   * yield* card().swipeIn(1.5);
+   * ```
+   */
+  public *swipeIn(
+    duration = this.theme().motion.long,
+    easing: TimingFunction = this.theme().motion.enter,
+  ): ThreadGenerator {
+    for (const child of this.children()) {
+      if (child instanceof CardImage && child.visible()) yield child;
+    }
+    const parts = this.revealParts();
+    const restore = preserveSignal(this.opacity);
+    const surfaceTime = parts.length ? duration * 0.5 : duration;
+    const wipeTime = duration - surfaceTime;
+    const interval = Math.min(
+      this.theme().motion.short / 2,
+      wipeTime / Math.max(1, parts.length),
+    );
+    const passTime = wipeTime - interval * Math.max(0, parts.length - 1);
+    let completed = false;
+    this.opacity(0);
+    for (const part of parts) part.node.opacity(0);
+    try {
+      const options = {
+        easing,
+        colors: [this.theme().colors.accent],
+      };
+      yield* colorSwipe(this, {...options, duration: surfaceTime});
+      yield* sequence(
+        interval,
+        ...parts.map(part =>
+          colorSwipe(part.node, {...options, duration: passTime}),
+        ),
+      );
+      completed = true;
+    } finally {
+      for (const part of parts) part.restore();
+      if (!completed) restore();
     }
   }
 
@@ -538,45 +586,66 @@ export class Card extends Rect {
     easing: TimingFunction,
   ): ThreadGenerator {
     const parts = this.children().filter(
-      (child): child is Layout =>
-        child instanceof Layout && child.layoutEnabled(),
+      (child): child is Layout => child instanceof Layout,
     );
-    const restore: (() => void)[] = [];
-    const before = new Map(parts.map(part => [part, part.size()]));
-    const motions: {part: Layout; from: Vector2; to: Vector2}[] = [];
+    const visible = parts.filter(part => part.layoutEnabled());
+    const before = this.size();
+    const positions = new Map(
+      [this, ...visible].map(part => [part, part.absolutePosition()]),
+    );
+    const heights = new Map(
+      visible
+        .filter((part): part is CardImage => part instanceof CardImage)
+        .map(part => [part, part.height()]),
+    );
+    update();
+    const after = this.size();
+    const active = [this, ...parts.filter(part => part.layoutEnabled())];
+    const motions = active.map(part => ({
+      part,
+      from: positions.get(part) ?? part.absolutePosition(),
+      to: part.absolutePosition(),
+      translate: part.translate(),
+      restore: preserveSignal(part.translate),
+    }));
+    const images = active
+      .filter((part): part is CardImage => part instanceof CardImage)
+      .map(part => ({
+        part,
+        from: heights.get(part) ?? part.height(),
+        to: part.height(),
+        restore: preserveSignal(part.height),
+      }));
+    const restoreWidth = preserveSignal(this.width);
+    const restoreHeight = preserveSignal(this.height);
+    const restoreShrink = parts.map(part => preserveSignal(part.shrink));
+    // Text must keep its natural height while the outer frame catches up.
+    for (const part of parts) part.shrink(0);
+    this.lockLayout();
     try {
-      yield* all(
-        this.editLayout(
-          duration,
-          () => {
-            update();
-            const active = parts.filter(part => part.layoutEnabled());
-            restore.push(
-              ...active.flatMap(part => [
-                preserveSignal(part.width),
-                preserveSignal(part.height),
-              ]),
-            );
-            const sizes = active.map(part => part.size());
-            // Keep child frames aligned with the card while editLayout
-            // temporarily makes them independent layout roots.
-            active.forEach((part, index) => {
-              const from = before.get(part);
-              const to = sizes[index];
-              if (from) motions.push({part, from, to});
-              part.size(to);
-            });
-          },
-          easing,
-        ),
-        tween(duration, value => {
-          for (const {part, from, to} of motions) {
-            part.size(Vector2.lerp(from, to, easing(value)));
-          }
-        }),
-      );
+      // Keep one Yoga tree throughout the resize so text uses the same
+      // pixel rounding before, during, and after the animation.
+      yield* tween(duration, value => {
+        const progress = easing(value);
+        this.size(Vector2.lerp(before, after, progress));
+        for (const {part, from, to} of images) {
+          part.height(from + (to - from) * progress);
+        }
+        for (const {part, from, to, translate} of motions) {
+          part.translate(translate);
+          const delta = Vector2.lerp(from, to, progress).sub(
+            part.absolutePosition(),
+          );
+          part.translate(translate.add(delta.transform(part.worldToLocal())));
+        }
+      });
     } finally {
-      for (const property of restore) property();
+      this.releaseLayout();
+      restoreWidth();
+      restoreHeight();
+      for (const image of images) image.restore();
+      for (const restore of restoreShrink) restore();
+      for (const motion of motions) motion.restore();
     }
   }
 
@@ -621,10 +690,6 @@ export class Card extends Rect {
 
   protected getDefaultFill(): string {
     return this.theme().colors.surface;
-  }
-
-  protected getDefaultStroke(): string {
-    return this.theme().colors.border;
   }
 
   protected getDefaultFontFamily(): string {

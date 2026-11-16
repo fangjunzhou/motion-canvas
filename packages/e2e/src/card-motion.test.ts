@@ -47,6 +47,17 @@ describe('Card animations', () => {
     expect(new Set(stationary.map(sample => sample.footerY)).size).toBe(1);
   });
 
+  test('keeps the curve and progress bar aligned throughout the composition scene', () => {
+    expect(probe.badgeLayout.length).toBeGreaterThan(0);
+    for (const sample of probe.badgeLayout) {
+      expect(sample.curveX).toBeCloseTo(sample.progress, 5);
+    }
+  });
+
+  test('keeps the curve inside the card throughout the composition scene', () => {
+    expect(probe.badgeLayout.every(sample => sample.curveInside)).toBe(true);
+  });
+
   test('uses independent theme padding, gaps, and typography with explicit overrides', () => {
     expect(probe.styles.defaults).toEqual({
       padding: 32,
@@ -257,6 +268,38 @@ describe('Card animations', () => {
     ).toBe(true);
     expect(hidden.at(-1)?.src).toBe(source);
     expect(hidden.at(-1)?.description).toBe('Cornell box');
+  });
+
+  test('settles the demo image resize without a half-pixel position jump', async () => {
+    const errors = await page.evaluate(() =>
+      window.commons.project.logger.history
+        .filter(entry => entry.level === 'error')
+        .map(entry => entry.message),
+    );
+    expect(errors).toEqual([]);
+    const settledIndex = probe.imageLayout.findIndex(
+      sample => !sample.resizing,
+    );
+    expect(settledIndex).toBeGreaterThan(0);
+    const before = probe.imageLayout[settledIndex - 1];
+    const settled = probe.imageLayout[settledIndex];
+    expect(before.resizing).toBe(true);
+    expect(before.textOpacity).toBe(0);
+    settled.positions.forEach((position, index) => {
+      position.forEach((value, axis) => {
+        expect(Math.abs(value - before.positions[index][axis])).toBeLessThan(
+          0.1,
+        );
+      });
+    });
+    for (const sample of probe.imageLayout.slice(settledIndex)) {
+      expect(sample.positions).toEqual(settled.positions);
+      expect(sample.textPositions).toEqual(settled.textPositions);
+    }
+  });
+
+  test('keeps visible title and description text inside the card during image and footer resizes', () => {
+    expect(probe.visibleTextInside).toBe(true);
   });
 
   test('restores image state after cancellation and supports zero durations and clones', () => {
