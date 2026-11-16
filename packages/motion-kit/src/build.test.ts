@@ -73,7 +73,7 @@ describe('catalog distribution', () => {
     expect(docs).toContain(source.trimEnd());
     expect(docs).toContain('../components/motion/foundations/theme');
     expect(docs).not.toContain("from '../registry/");
-    expect(docs).toContain('<Fiddle mode="preview"');
+    expect(docs).toContain('<Fiddle mode="preview" ratio="16/9" width="1920"');
     expect(docs).toContain('scrubbable showSource={false}');
     const preview = await readFile(result.previews[0], 'utf8');
     expect(preview).toContain('#f97316');
@@ -124,8 +124,9 @@ describe('catalog distribution', () => {
     });
     const diagnostics = ts.getPreEmitDiagnostics(program);
     expect(
-      diagnostics.map(diagnostic =>
-        ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
+      diagnostics.map(
+        diagnostic =>
+          `${diagnostic.file?.fileName}:${diagnostic.start}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
       ),
     ).toEqual([]);
   });

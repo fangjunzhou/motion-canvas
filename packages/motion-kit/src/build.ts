@@ -401,7 +401,7 @@ export async function buildCatalog(
         name: item.name,
         description: item.description,
         preview: preview
-          ? `<Fiddle mode="preview" ratio="16/9" width="960" scrubbable showSource={false}>\n{${JSON.stringify(preview)}}\n</Fiddle>`
+          ? `<Fiddle mode="preview" ratio="16/9" width="1920" scrubbable showSource={false}>\n{${JSON.stringify(preview)}}\n</Fiddle>`
           : 'This item defines TypeScript contracts and has no visual preview.',
         dependencies:
           dependencies
