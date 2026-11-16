@@ -34,4 +34,12 @@ export default makeScene2D(function* (view) {
   marker().selection('remarkable');
   yield* marker().reveal();
   yield* waitFor(1);
+  yield* marker().erase();
+  marker().style('straight');
+  marker().selections([
+    {text: 'truly', color: 'rgba(64, 160, 43, 0.3)'},
+    {text: 'World Cup', color: 'rgba(30, 102, 245, 0.3)'},
+  ]);
+  yield* marker().reveal();
+  yield* waitFor(1);
 });

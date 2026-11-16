@@ -27,6 +27,21 @@ sentence, put the complete sentence in Highlight and set `selection` to the
 phrase. The first exact match is selected. `selection={null}` marks all text; an
 empty or absent match draws no marker. Text on a curved path is not annotated.
 
+Use `selections` to mark several phrases with different colors in the same
+paragraph. A nonempty list overrides `selection`; each phrase uses its first
+exact match. Omitted colors inherit `color`. All markers share `progress` and
+leave the text's foreground and wrapping unchanged.
+
+```tsx
+<Highlight
+  text="Direct control is precise; authoring detail is expensive."
+  selections={[
+    {text: 'Direct control', color: 'rgba(166, 209, 137, 0.3)'},
+    {text: 'expensive', color: 'rgba(231, 130, 132, 0.3)'},
+  ]}
+/>
+```
+
 Wrapped selections produce a separate stroke for each line, in reading order.
 Changing the text, width, font, or selection remeasures the marker. Progress and
 marker padding never change the text's dimensions or surrounding layout.
@@ -38,6 +53,7 @@ marker padding never change the text's dimensions or surrounding layout.
 | `style`               | `"straight"`   | A single rectangular wipe, or `"hand-drawn"` brush passes.                             |
 | `progress`            | `0`            | Amount drawn, clamped to 0–1. Non-finite values draw nothing.                          |
 | `selection`           | `null`         | First matching phrase, or the whole paragraph.                                         |
+| `selections`          | `[]`           | Multiple `{text, color?}` markers, overriding `selection` when nonempty.               |
 | `color`               | Theme yellow   | Marker canvas style; native `fill` controls text color.                                |
 | `markerPadding`       | `0`            | Native spacing syntax for marker outsets. Native `padding` still controls text layout. |
 | `iterations`          | `2`            | Passes per line, floored and bounded to 0–16. Alternating passes reverse direction.    |

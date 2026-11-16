@@ -1,5 +1,6 @@
 import {
   Txt,
+  canvasStyleParser,
   canvasStyleSignal,
   initial,
   interpolation,
@@ -26,11 +27,18 @@ import {defaultTheme, type MotionTheme} from '../foundations/theme';
 /** Marker geometry, independent of text layout and animation timing. */
 export type HighlightStyle = 'straight' | 'hand-drawn';
 
+/** A phrase and its optional marker color within one wrapping paragraph. */
+export interface HighlightSelection {
+  text: string;
+  color?: PossibleCanvasStyle;
+}
+
 /** Native text props with a draw-on marker behind the first matching phrase. */
 export interface HighlightProps extends TxtProps {
   style?: SignalValue<HighlightStyle>;
   progress?: SignalValue<number>;
   selection?: SignalValue<string | null>;
+  selections?: SignalValue<readonly HighlightSelection[]>;
   color?: SignalValue<PossibleCanvasStyle>;
   markerPadding?: SignalValue<PossibleSpacing>;
   iterations?: SignalValue<number>;
@@ -64,6 +72,14 @@ export class Highlight extends Txt {
   @initial(null)
   @signal()
   declare public readonly selection: SimpleSignal<string | null, this>;
+
+  /** Multiple phrase markers; a nonempty list takes precedence over selection. */
+  @initial([])
+  @signal()
+  declare public readonly selections: SimpleSignal<
+    readonly HighlightSelection[],
+    this
+  >;
 
   @canvasStyleSignal()
   declare public readonly color: CanvasStyleSignal<this>;
@@ -139,8 +155,24 @@ export class Highlight extends Txt {
    * ```
    */
   public markerBoxes(): BBox[] {
+    return this.markers().map(marker => marker.box);
+  }
+
+  private markers() {
+    const selections = this.selections();
+    const ranges = selections.length
+      ? selections
+      : [{text: this.selection(), color: this.color()}];
+    return ranges.flatMap(range =>
+      this.selectionBoxes(range.text).map(box => ({
+        box,
+        color: canvasStyleParser(range.color ?? this.color()),
+      })),
+    );
+  }
+
+  private selectionBoxes(selection: string | null): BBox[] {
     const text = this.text();
-    const selection = this.selection();
     const start = selection === null ? 0 : text.indexOf(selection);
     if (start < 0 || selection === '') return [];
     const end = selection === null ? text.length : start + selection.length;
@@ -212,20 +244,20 @@ export class Highlight extends Txt {
     if (
       !this.disabled() &&
       Number.isFinite(progress) &&
-      (!handDrawn || Number.isFinite(iterations)) &&
-      this.color() !== null
+      (!handDrawn || Number.isFinite(iterations))
     ) {
-      const boxes = this.markerBoxes().filter(
-        box => box.width > 0 && box.height > 0,
+      const markers = this.markers().filter(
+        ({box, color}) => color !== null && box.width > 0 && box.height > 0,
       );
       const passes = handDrawn
         ? Math.max(0, Math.min(16, Math.floor(iterations)))
         : 1;
-      const total = boxes.reduce((sum, box) => sum + box.width * passes, 0);
+      const total = markers.reduce((sum, {box}) => sum + box.width * passes, 0);
       let remaining = total * Math.max(0, Math.min(1, progress));
       context.save();
-      context.fillStyle = resolveCanvasStyle(this.color(), context);
-      for (const [line, box] of boxes.entries()) {
+      for (const [line, {box, color}] of markers.entries()) {
+        if (color === null) continue;
+        context.fillStyle = resolveCanvasStyle(color, context);
         for (let pass = 0; pass < passes; pass++) {
           const length = Math.min(box.width, Math.max(0, remaining));
           remaining -= box.width;
