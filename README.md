@@ -185,6 +185,19 @@ Then run `pnpm install` in to apply the changes and that's it.
 
 You can use the same technique to test out any custom package you're working on.
 
+## Personal animation toolkit
+
+The private [Motion Kit](./packages/motion-kit/README.md) package provides an
+editable source catalog, theme tokens, motion contracts, and generated gallery
+documentation. It starts with foundations; components and blocks are added as
+real animations need them.
+
+Run `pnpm motion-kit:build` to generate its registry and documentation, or
+`pnpm docs:dev` to browse the local gallery at `/motion-kit`.
+
+Run `pnpm motion-kit:dev` for the standalone demo editor. Its project and scenes
+live under `packages/motion-kit/demo`.
+
 ## Contributing
 
 Read through our [Contribution Guide](./CONTRIBUTING.md) to learn how you can

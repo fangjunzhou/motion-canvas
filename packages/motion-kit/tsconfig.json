@@ -1,0 +1,9 @@
+{
+  "extends": "@canvas-commons/2d/tsconfig.project.json",
+  "compilerOptions": {
+    "target": "es2022",
+    "strict": true,
+    "types": ["node", "@canvas-commons/core/project"]
+  },
+  "include": ["src", "registry", "examples", "demo"]
+}

@@ -64,6 +64,26 @@
   border-bottom: none;
 }
 
+.scrubber {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.5rem;
+  background-color: var(--ifm-background-surface-color);
+}
+
+.scrubber input {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--ifm-color-primary);
+}
+
+.frameCount {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
 .section {
   display: flex;
   justify-content: center;
@@ -180,6 +200,7 @@
 .codeOnly .controls,
 .codeOnly .error,
 .codeOnly .progress,
+.codeOnly .scrubber,
 .codeOnly :global(.cm-editor) {
   display: none !important;
 }

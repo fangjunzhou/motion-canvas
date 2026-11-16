@@ -1,0 +1,88 @@
+---
+title: Motion Kit
+slug: /
+sidebar_position: 0
+---
+
+import Link from '@docusaurus/Link';
+
+A private source catalog for personal Canvas Commons animations. Copy the items
+you need into a project, customize them locally, and control their timing from
+your scenes.
+
+## Catalog
+
+| Item | Layer | Purpose |
+| ---- | ----- | ------- |
+
+{{items}}
+
+The initial catalog contains foundations and a motion contract. Components and
+blocks are added when actual animations establish their requirements.
+
+<Link to="pathname:///r/motion-kit/registry.json">
+  Inspect the generated registry
+</Link>
+
+## Layers
+
+- **Foundations:** semantic colors, typography, spacing, radii, durations, and
+  easing.
+- **Components:** native scene nodes with typed props and reactive signals.
+- **Motion:** optional generator methods with duration and easing parameters.
+- **Blocks:** compositions of components for common storytelling tasks.
+- **Registry:** source files, npm dependencies, and other required catalog
+  items.
+- **Gallery and docs:** previews and usage derived from the same canonical
+  source.
+
+## Component contract
+
+Extend the closest existing scene node and preserve its useful layout
+properties. Construct child nodes once, bind changing child properties to the
+parent's signals, and keep internal references private. Container components
+should expose a documented content area.
+
+Use `SignalValue<T>` for reactive props, `@signal()` or specialized decorators
+for their implementations, and the scene JSX runtime from `@canvas-commons/2d`.
+Pass constructor-only configuration separately from node signal props. Keep
+React and Preact imports in their own UI runtimes.
+
+Expose `enter`, `exit`, or `emphasize` only when meaningful. Each method returns
+a `ThreadGenerator`; durations use seconds and easing uses core's
+`TimingFunction`. The caller schedules animations with `yield*`, `all`, or
+`sequence`. Use engine time and scene-local state so reset and seeking can
+reconstruct the animation.
+
+## Adding an item
+
+1. Put editable source under the appropriate `registry/` layer.
+2. Add an example under `examples/` and API documentation under
+   `documentation/`.
+3. Register its files, install destinations, dependencies, and example in the
+   catalog.
+4. Mark components and blocks as playable previews; their example must export a
+   scene.
+5. Build the catalog and verify the generated documentation and preview.
+
+The authoring template covers installation, usage, API documentation, source,
+and updates. Relative imports must resolve through files included with the item
+or its declared catalog dependencies. Preserve the same relative relationships
+at their install destinations.
+
+## Acceptance criteria
+
+- Copied source and the documented example type-check in a fresh project.
+- Reactive updates reach child nodes without recreating the component.
+- Multiple instances and local theme overrides remain independent.
+- The animation replays and seeks deterministically after reset.
+- Useful inherited layout props and documented content areas work.
+- Cloning, when supported, preserves configuration without duplicating children.
+- Preview output matches the documented behavior.
+
+## Distribution
+
+Installation starts with copying source. The generated JSON follows the shadcn
+registry format, but direct installer compatibility is not yet established for
+Canvas Commons. Updates are deliberate diffs; each consuming project owns its
+installed files.

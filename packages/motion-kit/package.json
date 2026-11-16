@@ -1,0 +1,32 @@
+{
+  "name": "@canvas-commons/motion-kit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Source catalog and authoring foundations for personal Canvas Commons components",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsdown && node lib/generate.js",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "dev": "vite --config vite.demo.config.ts",
+    "demo:build": "vite build --config vite.demo.config.ts"
+  },
+  "dependencies": {
+    "@canvas-commons/2d": "workspace:^",
+    "@canvas-commons/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "^6.0.3",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "@canvas-commons/editor": "workspace:^",
+    "@canvas-commons/vite-plugin": "workspace:^"
+  }
+}

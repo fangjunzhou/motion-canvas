@@ -223,6 +223,9 @@ importers:
       '@canvas-commons/fiddle':
         specifier: workspace:^
         version: link:../fiddle
+      '@canvas-commons/motion-kit':
+        specifier: workspace:*
+        version: link:../motion-kit
       '@canvas-commons/player':
         specifier: workspace:^
         version: link:../player
@@ -535,6 +538,34 @@ importers:
       jsdom:
         specifier: 'catalog:'
         version: 30.1.1
+      vite:
+        specifier: 'catalog:'
+        version: 8.3.0(@types/node@20.19.43)(jiti@2.6.1)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.1)
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.1(@types/node@20.19.43)(jsdom@30.1.1)(vite@8.3.0(@types/node@20.19.43)(jiti@2.6.1)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.1))
+
+  packages/motion-kit:
+    dependencies:
+      '@canvas-commons/2d':
+        specifier: workspace:^
+        version: link:../2d
+      '@canvas-commons/core':
+        specifier: workspace:^
+        version: link:../core
+    devDependencies:
+      '@canvas-commons/editor':
+        specifier: workspace:^
+        version: link:../editor
+      '@canvas-commons/vite-plugin':
+        specifier: workspace:^
+        version: link:../vite-plugin
+      '@types/node':
+        specifier: ^20.19.43
+        version: 20.19.43
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
       vite:
         specifier: 'catalog:'
         version: 8.3.0(@types/node@20.19.43)(jiti@2.6.1)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.1)

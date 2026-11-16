@@ -11,7 +11,7 @@ module.exports = (context, options) => ({
       .replace('{{source}}', './project.js');
 
     const examples = options.examples ?? [];
-    for (const {fileName} of examples) {
+    for (const {fileName, source = `examples/${fileName}.js`} of examples) {
       const dir = `./static/editor/${fileName}`;
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, {recursive: true});
@@ -20,7 +20,7 @@ module.exports = (context, options) => ({
       await fs.promises.writeFile(`${dir}/index.html`, html);
       await fs.promises.writeFile(
         `${dir}/project.js`,
-        `import project from '${baseUrl}examples/${fileName}.js';` +
+        `import project from '${baseUrl}${source}';` +
           `import {editor} from '${baseUrl}editor/main.js';` +
           `editor(project);`,
       );

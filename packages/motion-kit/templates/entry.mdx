@@ -1,0 +1,51 @@
+---
+title: {{title}}
+slug: /{{name}}
+---
+
+import Link from '@docusaurus/Link';
+import Fiddle from '@site/src/components/Fiddle';
+
+{{description}}
+
+## Preview
+
+{{preview}}
+
+## Installation
+
+Copy the source files below into an existing TypeScript Canvas Commons project.
+Install the declared npm dependencies using versions compatible with your
+project. Keep `jsxImportSource` set to `@canvas-commons/2d` and legacy
+decorators enabled.
+
+<Link to="pathname:///r/motion-kit/{{name}}.json">
+  View registry metadata and dependency versions
+</Link>
+
+{{files}}
+
+### Other catalog items
+
+{{dependencies}}
+
+## Usage
+
+Place this example under `src/scenes/`. Its local imports point to the copied
+source, so editing that source changes your animation.
+
+{{usage}}
+
+{{documentation}}
+
+## Source
+
+These files are read directly from the canonical catalog during the build.
+
+{{sources}}
+
+## Updating your copy
+
+Keep local customizations in version control. Compare a newer registry item's
+source against your copy and apply the changes you want. Registry builds never
+write into consuming projects.

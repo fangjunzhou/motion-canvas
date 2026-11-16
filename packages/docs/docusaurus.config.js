@@ -7,6 +7,7 @@ const config = {
     'A TypeScript framework for creating animations with code. Write animations with JSX and generators.',
   url: process.env.DOCS_URL ?? 'https://canvascommons.io',
   baseUrl: process.env.DOCS_BASE_URL ?? '/',
+  staticDirectories: ['static', '../motion-kit/dist/static'],
   onBrokenLinks: 'throw',
   onBrokenAnchors: 'throw',
   favicon: 'img/favicon.svg',
@@ -65,6 +66,7 @@ const config = {
             label: 'Docs',
           },
           {to: '/api/core', label: 'API', position: 'left'},
+          {to: '/motion-kit', label: 'Motion Kit', position: 'left'},
           {to: '/blog', label: 'Blog', position: 'left'},
           {
             href: 'https://github.com/canvas-commons/canvas-commons',
@@ -156,6 +158,16 @@ const config = {
     [
       '@docusaurus/plugin-content-docs',
       {
+        id: 'motion-kit',
+        path: '../motion-kit/dist/docs',
+        routeBasePath: '/motion-kit',
+        sidebarPath: 'sidebars.js',
+        docItemComponent: '@site/src/components/DocPage',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
         routeBasePath: '/docs',
         sidebarPath: 'sidebars.js',
         exclude: ['**/api/core/*.md', '**/api/2d/*.md'],
@@ -196,6 +208,13 @@ const config = {
       './editor',
       {
         examples: [
+          {
+            name: 'Motion Kit Showcase',
+            fileName: 'motion-kit-showcase',
+            source: 'demos/motion-kit-showcase.js',
+            url: 'motion-kit-showcase/',
+            filePath: 'Catppuccin themes, reactive composition, and motion',
+          },
           {
             name: 'Random',
             fileName: 'random',

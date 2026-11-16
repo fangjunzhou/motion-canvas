@@ -32,6 +32,8 @@ export interface FiddleProps {
   mode?: 'code' | 'editor' | 'preview';
   ratio?: string;
   width?: string;
+  scrubbable?: boolean;
+  showSource?: boolean;
 }
 
 /** How far outside the viewport a fiddle keeps its iframe and worker. */
@@ -47,6 +49,8 @@ export default function Fiddle({
   mode: initialMode = 'editor',
   ratio = '4',
   width,
+  scrubbable = false,
+  showSource = true,
 }: FiddleProps) {
   const manifest = useFiddleManifest();
   const id = useId();
@@ -288,32 +292,34 @@ export default function Fiddle({
         [styles.previewOnly]: mode === 'preview',
       })}
     >
-      <div className={styles.layoutControl}>
-        <button
-          className={clsx(styles.icon, mode === 'code' && styles.active)}
-          onClick={() => switchMode('code')}
-          title="Source code"
-          aria-pressed={mode === 'code'}
-        >
-          <IconText />
-        </button>
-        <button
-          className={clsx(styles.icon, mode === 'editor' && styles.active)}
-          onClick={() => switchMode('editor')}
-          title="Editor with preview"
-          aria-pressed={mode === 'editor'}
-        >
-          <IconSplit />
-        </button>
-        <button
-          className={clsx(styles.icon, mode === 'preview' && styles.active)}
-          onClick={() => switchMode('preview')}
-          title="Preview"
-          aria-pressed={mode === 'preview'}
-        >
-          <IconImage />
-        </button>
-      </div>
+      {showSource && (
+        <div className={styles.layoutControl}>
+          <button
+            className={clsx(styles.icon, mode === 'code' && styles.active)}
+            onClick={() => switchMode('code')}
+            title="Source code"
+            aria-pressed={mode === 'code'}
+          >
+            <IconText />
+          </button>
+          <button
+            className={clsx(styles.icon, mode === 'editor' && styles.active)}
+            onClick={() => switchMode('editor')}
+            title="Editor with preview"
+            aria-pressed={mode === 'editor'}
+          >
+            <IconSplit />
+          </button>
+          <button
+            className={clsx(styles.icon, mode === 'preview' && styles.active)}
+            onClick={() => switchMode('preview')}
+            title="Preview"
+            aria-pressed={mode === 'preview'}
+          >
+            <IconImage />
+          </button>
+        </div>
+      )}
       <div className={styles.preview} style={{aspectRatio: parsedRatio}}>
         <div className={styles.previewHost} ref={previewRef} />
         {duration === null && (
@@ -330,6 +336,19 @@ export default function Fiddle({
       )}
       <div className={styles.controls}>
         <div className={styles.section}>
+          {scrubbable && (
+            <button
+              className={styles.button}
+              disabled={duration === null}
+              onClick={() => {
+                playbackRef.current = 'playing';
+                hostRef.current?.seek(0);
+                hostRef.current?.play();
+              }}
+            >
+              Replay
+            </button>
+          )}
           {hasChangedSinceLastUpdate && (
             <button onClick={updatePreview} className={styles.button}>
               <kbd>CTRL</kbd>
@@ -388,6 +407,27 @@ export default function Fiddle({
           )}
         </div>
       </div>
+      {scrubbable && (
+        <label className={styles.scrubber}>
+          <span>Playhead</span>
+          <input
+            type="range"
+            min={0}
+            max={duration ?? 0}
+            step={1}
+            value={Math.min(frame, duration ?? 0)}
+            disabled={duration === null}
+            onChange={event => {
+              playbackRef.current = 'paused';
+              hostRef.current?.pause();
+              hostRef.current?.seek(Number(event.currentTarget.value));
+            }}
+          />
+          <span className={styles.frameCount}>
+            {frame} / {duration ?? 0}
+          </span>
+        </label>
+      )}
       {error && (
         <pre role="alert" className={styles.error}>
           {error}
