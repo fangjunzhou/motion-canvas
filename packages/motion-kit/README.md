@@ -3,8 +3,9 @@
 A private source catalog for personal Canvas Commons animations. Copy native
 components and scene effects into your project, then edit them locally. The
 catalog includes Card, Badge, Progress, Highlight, Ink Arrow, Region Highlight,
-Paper Stack, Chart, and presentation slides. Shared motion helpers cover pushes,
-flicker, color wipes, and shape and text transforms.
+Paper Stack, Chart, Table, List, Video Card, Flow, and presentation slides.
+Shared motion helpers cover pushes, flicker, color wipes, and shape and text
+transforms.
 
 ## Working locally
 
@@ -60,6 +61,12 @@ The `slide` registry item includes `TitleSlide`, `ContentSlide`, `SectionSlide`,
 and `BlankSlide`. Their default canvas is 1920 × 1080, with presentation title
 sizes based on Keynote’s White widescreen template. Use a slide’s `theme` prop
 to customize its typography, padding, and gaps.
+
+The Table scene demonstrates weighted columns, highlighted rows, row entrance,
+and independent column reveal. `List` supplies wrapping, shape-marked bullets;
+`VideoCard` supplies local video covers, clip changes, fitting, and post-intro
+loops; `Flow` composes cards with labeled connectors. Each has a canonical
+playable example and documentation in the catalog.
 
 ## Layers
 
