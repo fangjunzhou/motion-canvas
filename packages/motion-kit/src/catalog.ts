@@ -169,5 +169,23 @@ export const catalog: CatalogDefinition = {
       example: 'examples/effects.tsx',
       preview: true,
     },
+    {
+      name: 'chart',
+      title: 'Chart',
+      description:
+        'Compose reactive axes and clipped data lines in a plot frame.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/Chart.ts',
+          target: 'src/components/motion/components/Chart.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['theme'],
+      documentation: 'documentation/chart.md',
+      example: 'examples/chart.tsx',
+      preview: true,
+    },
   ],
 };

@@ -1,9 +1,8 @@
-import {Layout, Line, makeScene2D, Txt} from '@canvas-commons/2d';
+import {Layout, makeScene2D, Txt} from '@canvas-commons/2d';
 import {
   all,
   createRef,
   createSignal,
-  Vector2,
   waitFor,
   type ThreadGenerator,
 } from '@canvas-commons/core';
@@ -16,10 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from '../../registry/components/Card';
+import {Chart, ChartLine} from '../../registry/components/Chart';
 import {Progress} from '../../registry/components/Progress';
 import {ContentSlide} from '../../registry/components/Slide';
-import {defaultTheme} from '../../registry/foundations/theme';
 import type {MotionMethods} from '../../registry/motion/contracts';
+import {fitSlide} from '../layout';
+import {demoTheme} from '../theme';
 
 const Steps = [
   {
@@ -36,21 +37,20 @@ const Steps = [
   },
 ];
 
-const CurvePoints = [
-  [0, 0.8],
-  [0.2, 0.8],
-  [0.35, 0.3],
-  [0.55, 0.6],
-  [0.75, 0.2],
-  [0.9, 0.4],
-  [1, 0.2],
+const CurveData = [
+  [0, 0.2],
+  [0.2, 0.2],
+  [0.35, 0.7],
+  [0.55, 0.4],
+  [0.75, 0.8],
+  [0.9, 0.6],
+  [1, 0.8],
 ] satisfies readonly [number, number][];
 
 export default makeScene2D(function* (view) {
-  const theme = defaultTheme;
+  const theme = demoTheme;
   const stage = createRef<ContentSlide>();
   const panel = createRef<Card>();
-  const chart = createRef<Layout>();
   const progress = createSignal(0);
   const phase = createSignal('enter');
   const status = createRef<Badge>();
@@ -75,7 +75,7 @@ export default makeScene2D(function* (view) {
         panel().scale(1.02, duration, easing),
       );
       yield* all(
-        panel().stroke(theme.colors.border, duration, easing),
+        panel().stroke(null, duration, easing),
         panel().scale(1, duration, easing),
       );
     },
@@ -94,8 +94,9 @@ export default makeScene2D(function* (view) {
   view.add(
     <ContentSlide
       ref={stage}
+      theme={theme}
       opacity={0}
-      size={() => view.size()}
+      {...fitSlide(view)}
       title="Scene Composition and Animation"
       subtitle="Watch one signal update the label, bar, and curve together."
     >
@@ -114,26 +115,23 @@ export default makeScene2D(function* (view) {
             <CardDescription text="One signal drives the bar and curve." />
           </CardHeader>
           <CardContent grow={1} minHeight={0} gap={theme.spacing.medium}>
-            <Layout ref={chart} grow={1} basis={0} minHeight={0}>
-              <Line
-                layout={false}
-                opacity={() => (progress() > 0 ? 1 : 0)}
-                points={() =>
-                  CurvePoints.map(
-                    ([x, y]) =>
-                      new Vector2(
-                        chart().width() * (x - 0.5),
-                        chart().height() * (y - 0.5),
-                      ),
-                  )
-                }
-                end={progress}
+            <Chart
+              theme={theme}
+              width={null}
+              height={null}
+              minWidth={0}
+              grow={1}
+              basis={0}
+              minHeight={0}
+            >
+              <ChartLine
+                data={CurveData}
+                progress={progress}
                 radius={theme.radius.medium}
                 stroke={theme.colors.accent}
                 lineWidth={8}
-                lineCap="round"
               />
-            </Layout>
+            </Chart>
             <Layout direction="column" gap={theme.spacing.small} shrink={0}>
               <Layout justifyContent="space-between">
                 <Txt text="Animation progress" fill={theme.colors.muted} />
@@ -170,9 +168,7 @@ export default makeScene2D(function* (view) {
               grow={1}
               basis={0}
               minHeight={0}
-              stroke={() =>
-                phase() === name ? theme.colors.accent : theme.colors.border
-              }
+              stroke={() => (phase() === name ? theme.colors.accent : null)}
             >
               <CardHeader>
                 <Badge
