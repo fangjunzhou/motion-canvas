@@ -162,8 +162,8 @@ export class Badge extends Rect {
   }
 
   /**
-   * Fade the label out, resize, replace its text and variant, then fade it in.
-   * An explicit replacement changes the text binding. Size and label opacity
+   * Fade the label out, resize its width, replace its text and variant, then fade it in.
+   * An explicit replacement changes the text binding. Width and label opacity
    * bindings are restored when finished or cancelled.
    * @example
    * ```ts
@@ -177,25 +177,22 @@ export class Badge extends Rect {
   ): ThreadGenerator {
     const value = typeof update === 'string' ? {text: update} : update;
     const restoreWidth = preserve(this.width);
-    const restoreHeight = preserve(this.height);
     const restoreOpacity = preserve(this.label.opacity);
     const opacity = this.label.opacity();
-    const before = this.size();
+    const before = this.width();
     const probe = this.clone({text: value.text});
-    const after = probe.size();
+    const after = probe.width();
     probe.dispose();
     try {
       yield* this.label.opacity(0, duration * 0.25, easing);
-      this.size(before);
-      yield* this.size(after, duration * 0.5, easing);
+      this.width(before);
+      yield* this.width(after, duration * 0.5, easing);
       this.text(value.text);
       if (value.variant !== undefined) this.variant(value.variant);
       restoreWidth();
-      restoreHeight();
       yield* this.label.opacity(opacity, duration * 0.25, easing);
     } finally {
       restoreWidth();
-      restoreHeight();
       restoreOpacity();
     }
   }

@@ -61,11 +61,12 @@ export interface CardImageProps extends ImgProps {
   fit?: SignalValue<CardImageFit>;
 }
 
-/** A replacement image, its frame height, and an optional card width. */
+/** A replacement image with optional frame dimensions and description. */
 export interface CardImageUpdate {
   src: SignalValue<string>;
   height?: number;
   width?: number;
+  description?: string;
 }
 
 function preserveSignal<TSetter, TValue extends TSetter, TOwner>(
@@ -130,6 +131,10 @@ function spacingOf(node: Node): number {
   return findCard(node)?.spacing() ?? defaultTheme.padding.medium;
 }
 
+function hasContent(node: Node): boolean {
+  return !(node instanceof Txt) || node.text().trim().length > 0;
+}
+
 /**
  * A themed, vertical container. Children are the public composition area.
  *
@@ -172,8 +177,11 @@ export class Card extends Rect {
           ? this.theme().spacing[this.variant() === 'sm' ? 'small' : 'medium']
           : this.spacing(),
       padding: () => {
-        const first = this.children()[0];
-        const last = this.children().at(-1);
+        const parts = this.children().filter(
+          child => !(child instanceof Layout) || child.layoutEnabled(),
+        );
+        const first = parts[0];
+        const last = parts.at(-1);
         return [
           first instanceof Img &&
           (!(first instanceof CardImage) || first.visible())
@@ -354,6 +362,7 @@ export class Card extends Rect {
 
   /**
    * Load the next image, fade out the current image, resize, and fade back in.
+   * An optional description changes with the image while both are faded out.
    * A hidden image changes source without becoming visible. On cancellation
    * before the resize finishes, the original source is restored.
    *
@@ -369,17 +378,21 @@ export class Card extends Rect {
   ): ThreadGenerator {
     const image = this.children().find(child => child instanceof CardImage);
     if (!image) return;
-    const {src, width, height} =
-      typeof update === 'object'
-        ? update
-        : {src: update, width: undefined, height: undefined};
+    const value: CardImageUpdate =
+      typeof update === 'object' ? update : {src: update};
+    const {src, width, height, description} = value;
+    const changes = this.textChanges({description});
+    const previousText = changes.map(change => ({
+      node: change.node,
+      snapshot: change.node.clone(),
+    }));
     const preload = new Img({src});
     const restoreSource = preserveSignal(image.src);
     const restoreOpacity = preserveSignal(image.opacity);
     const restoreWidth = preserveSignal(this.width);
     const restoreHeight = preserveSignal(image.height);
     const textParts =
-      width === undefined
+      width === undefined && description === undefined
         ? []
         : this.revealParts().filter(part => part.node !== image);
     const opacity = image.opacity();
@@ -390,6 +403,7 @@ export class Card extends Rect {
         image.src(src);
         if (height !== undefined) image.height(height);
         if (width !== undefined) this.width(width);
+        for (const change of changes) change.node.text(change.text);
         committed = true;
         return;
       }
@@ -403,6 +417,7 @@ export class Card extends Rect {
           image.src(src);
           if (height !== undefined) image.height(height);
           if (width !== undefined) this.width(width);
+          for (const change of changes) change.node.text(change.text);
         },
         easing,
       );
@@ -419,6 +434,11 @@ export class Card extends Rect {
         restoreSource();
         restoreWidth();
         restoreHeight();
+      }
+      // Txt stores text bindings in its child leaves, rather than text.context.
+      for (const {node, snapshot} of previousText) {
+        if (!committed) node.children(snapshot.children());
+        snapshot.dispose();
       }
       restoreOpacity();
       for (const part of textParts) part.restore();
@@ -753,6 +773,10 @@ export class CardHeader extends Layout {
   public override instantiate(props: NodeProps = {}): this {
     return super.instantiate(instanceProps(this, props));
   }
+
+  protected getDefaultLayoutSelf(): boolean | null {
+    return this.children().some(hasContent) ? null : false;
+  }
 }
 
 /**
@@ -776,6 +800,10 @@ export class CardTitle extends Txt {
   protected getDefaultFontSize(): number {
     return themeOf(this).typography.title;
   }
+
+  protected getDefaultLayoutSelf(): boolean | null {
+    return this.text().trim() ? null : false;
+  }
 }
 
 /**
@@ -794,6 +822,10 @@ export class CardDescription extends Txt {
 
   protected getDefaultFill(): string {
     return themeOf(this).colors.muted;
+  }
+
+  protected getDefaultLayoutSelf(): boolean | null {
+    return this.text().trim() ? null : false;
   }
 }
 
@@ -853,6 +885,10 @@ export class CardContent extends Layout {
 
   public override instantiate(props: NodeProps = {}): this {
     return super.instantiate(instanceProps(this, props));
+  }
+
+  protected getDefaultLayoutSelf(): boolean | null {
+    return this.children().some(hasContent) ? null : false;
   }
 }
 

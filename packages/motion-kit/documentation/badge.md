@@ -33,12 +33,14 @@ badge hidden before calling it. `exit` fades to zero and keeps the layout space.
 `emphasize` enlarges the current scale by 12%, then returns to its original
 value. It restores the original scale binding, including when cancelled.
 
-`changeText('Complete')` fades out the label, resizes the badge, replaces the
-text, and fades the label back in. Pass `{text: 'Complete', variant: 'default'}`
-to change the variant at the same time. Icons remain visible. The old text stays
-unchanged until resizing finishes. Width, height, and label opacity bindings are
-restored after completion or cancellation; committed text and variant changes
-remain. Fixed dimensions and parent constraints still apply.
+`changeText('Complete')` fades out the label, resizes the badge's width,
+replaces the text, and fades the label back in. Pass
+`{text: 'Complete', variant: 'default'}` to change the variant at the same time.
+Icons remain visible. The old text stays unchanged until resizing finishes.
+Height stays in its original layout mode to avoid shifting the badge or its
+container through pixel rounding. Width and label opacity bindings are restored
+after completion or cancellation; committed text and variant changes remain.
+Fixed dimensions and parent constraints still apply.
 
 Zero-duration calls apply their final state immediately. Repeated `enter` calls
 replay the reveal, and pulses preserve the badge's current scale. Schedule

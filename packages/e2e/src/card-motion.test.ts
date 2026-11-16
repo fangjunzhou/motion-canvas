@@ -21,6 +21,32 @@ describe('Card animations', () => {
     await page?.close();
   });
 
+  test('collapses missing descriptions and content without leaving section gaps', () => {
+    const parts = probe.optionalParts;
+    expect(parts.withoutDescription).toBeLessThan(parts.full);
+    expect(parts.withoutContent).toBeLessThan(parts.full);
+    expect(parts.titleOnly).toBeLessThan(parts.withoutDescription);
+    expect(parts.titleOnly).toBeLessThan(parts.withoutContent);
+    expect(parts.titleOnly).toBe(parts.omitted);
+    expect(parts.clone).toBe(parts.omitted);
+    expect(parts.restored).toBe(parts.full);
+  });
+
+  test('keeps the status footer at the same vertical position while its badge changes text', () => {
+    expect(new Set(probe.badgeLayout.map(sample => sample.text))).toEqual(
+      new Set(['Ready', 'Animating', 'Complete', 'Progress adjusted']),
+    );
+    expect(
+      new Set(probe.badgeLayout.map(sample => sample.width)).size,
+    ).toBeGreaterThan(4);
+    expect(probe.badgeLayout.every(sample => sample.automaticHeight)).toBe(
+      true,
+    );
+    const stationary = probe.badgeLayout.filter(sample => sample.stationary);
+    expect(stationary.length).toBeGreaterThan(0);
+    expect(new Set(stationary.map(sample => sample.footerY)).size).toBe(1);
+  });
+
   test('uses independent theme padding, gaps, and typography with explicit overrides', () => {
     expect(probe.styles.defaults).toEqual({
       padding: 32,
@@ -134,7 +160,7 @@ describe('Card animations', () => {
       ),
     ).toBe(true);
     const changed = probe.samples.find(
-      sample => sample.title === 'Follow-through',
+      sample => sample.title === 'Follow-Through',
     );
     expect(changed?.width).toBe(840);
     expect(
@@ -202,6 +228,7 @@ describe('Card animations', () => {
       changing.some(sample => sample.opacity > 0 && sample.opacity < 1),
     ).toBe(true);
     expect(changing.at(-1)).toMatchObject({
+      description: 'Stanford bunny',
       visible: true,
       opacity: 1,
       width: 300,
@@ -229,10 +256,12 @@ describe('Card animations', () => {
       hidden.every(sample => !sample.visible && sample.opacity === 0),
     ).toBe(true);
     expect(hidden.at(-1)?.src).toBe(source);
+    expect(hidden.at(-1)?.description).toBe('Cornell box');
   });
 
   test('restores image state after cancellation and supports zero durations and clones', () => {
     expect(probe.imageZeroDuration).toMatchObject({
+      description: 'Stanford bunny',
       visible: true,
       opacity: 1,
       loaded: true,
@@ -241,6 +270,7 @@ describe('Card animations', () => {
       imageHeight: 300,
     });
     expect(probe.imageCancelled).toMatchObject({
+      description: 'Stanford bunny',
       visible: true,
       opacity: 1,
       src: probe.imageZeroDuration.src,

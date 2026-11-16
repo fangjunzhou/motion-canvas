@@ -25,7 +25,7 @@ export default makeScene2D(function* (view) {
       <CardContent>
         <Txt
           textWrap
-          text="A ball dips down before it jumps. This small movement in the opposite direction helps the viewer follow the main action."
+          text="A ball dips down before it jumps. That small movement prepares the viewer for the jump."
           fill={theme.colors.foreground}
         />
       </CardContent>
@@ -43,10 +43,10 @@ export default makeScene2D(function* (view) {
   yield* waitFor(0.3);
   yield* card().changeText(
     {
-      title: 'Follow-through',
+      title: 'Follow-Through',
       description: 'Let the movement settle after the main action.',
       content:
-        'After a character stops, a loose coat can swing past the body before settling into place. Let that movement finish over a few extra frames. The delay helps the viewer feel the weight of the fabric and keeps the stop from looking abrupt.',
+        'After a character stops, a loose coat keeps swinging for a few frames. That delay gives the fabric a sense of weight.',
       footer: 'Animation principle · 05 / 12',
       width: 840,
     },

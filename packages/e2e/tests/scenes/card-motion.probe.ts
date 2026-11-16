@@ -12,6 +12,7 @@ export interface CardMotionSample {
 }
 
 export interface CardImageSample {
+  description: string;
   phase: string;
   height: number;
   width: number;
@@ -26,6 +27,22 @@ export interface CardImageSample {
 }
 
 export interface CardMotionProbe {
+  optionalParts: {
+    full: number;
+    withoutDescription: number;
+    withoutContent: number;
+    titleOnly: number;
+    omitted: number;
+    restored: number;
+    clone: number;
+  };
+  badgeLayout: {
+    text: string;
+    width: number;
+    footerY: number;
+    stationary: boolean;
+    automaticHeight: boolean;
+  }[];
   styles: Record<
     string,
     {

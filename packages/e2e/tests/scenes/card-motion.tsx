@@ -1,5 +1,12 @@
-import {Txt, makeScene2D} from '@canvas-commons/2d';
-import {all, cancel, waitFor, type ThreadGenerator} from '@canvas-commons/core';
+import {makeScene2D, Node, Txt} from '@canvas-commons/2d';
+import {
+  all,
+  cancel,
+  Vector2,
+  waitFor,
+  type ThreadGenerator,
+} from '@canvas-commons/core';
+import composition from '../../../motion-kit/demo/scenes/motion-kit-composition';
 import example from '../../../motion-kit/examples/card';
 import {Badge} from '../../../motion-kit/registry/components/Badge';
 import {
@@ -91,6 +98,86 @@ export default makeScene2D(function* (view) {
   copy.theme(defaultTheme);
   styles.native = readStyle(copy);
   for (const node of [styled, copy, badge]) {
+    node.remove();
+    node.dispose();
+  }
+
+  const optionalDescription = new CardDescription({text: 'Description'});
+  const optionalText = new Txt({text: 'Content'});
+  const optional = new Card({
+    width: 840,
+    children: [
+      new CardHeader({
+        children: [new CardTitle({text: 'Details'}), optionalDescription],
+      }),
+      new CardContent({children: optionalText}),
+    ],
+  });
+  const omitted = new Card({
+    width: 840,
+    children: new CardHeader({children: new CardTitle({text: 'Details'})}),
+  });
+  view.add([optional, omitted]);
+  const full = optional.height();
+  optionalDescription.text('');
+  const withoutDescription = optional.height();
+  optionalDescription.text('Description');
+  optionalText.text('');
+  const withoutContent = optional.height();
+  optionalDescription.text('  ');
+  const titleOnly = optional.height();
+  const optionalClone = optional.clone();
+  view.add(optionalClone);
+  yield* optional.changeText(
+    {description: 'Description', content: 'Content'},
+    0,
+  );
+  const optionalParts = {
+    full,
+    withoutDescription,
+    withoutContent,
+    titleOnly,
+    omitted: omitted.height(),
+    restored: optional.height(),
+    clone: optionalClone.height(),
+  };
+  for (const node of [optional, omitted, optionalClone]) {
+    node.remove();
+    node.dispose();
+  }
+
+  function descendants(node: Node): Node[] {
+    return [node, ...node.children().flatMap(descendants)];
+  }
+  const badgeLayout: CardMotionProbe['badgeLayout'] = [];
+  let composing = true;
+  yield* all(
+    (function* (): ThreadGenerator {
+      yield* composition.config(view);
+      composing = false;
+    })(),
+    (function* (): ThreadGenerator {
+      while (composing) {
+        const footer = descendants(view).find(
+          node => node instanceof CardFooter,
+        );
+        const status = footer?.children().find(node => node instanceof Badge);
+        const panel = footer?.parent();
+        if (!footer || !status || !(panel instanceof Card)) {
+          throw new Error('The composition is missing its status footer.');
+        }
+        badgeLayout.push({
+          text: status.text(),
+          width: status.width(),
+          footerY: footer.absolutePosition().y,
+          stationary: panel.scale().equals(Vector2.one),
+          automaticHeight: status.height.isInitial(),
+        });
+        yield;
+      }
+    })(),
+  );
+  for (const node of view.children()) {
     node.remove();
     node.dispose();
   }
@@ -194,11 +281,17 @@ export default makeScene2D(function* (view) {
       textWrap: true,
     }),
   });
-  const imageCard = new Card({width: 400, opacity: 0, children: [cover, body]});
+  const imageDescription = new CardDescription({text: 'Cornell box'});
+  const imageCard = new Card({
+    width: 400,
+    opacity: 0,
+    children: [cover, new CardHeader({children: imageDescription}), body],
+  });
   view.add(imageCard);
   const heightBinding = imageCard.height.context.raw();
   const images: CardImageSample[] = [];
   const imageSnapshot = (phase: string): CardImageSample => ({
+    description: imageDescription.text(),
     phase,
     height: imageCard.height(),
     width: imageCard.width(),
@@ -233,22 +326,31 @@ export default makeScene2D(function* (view) {
   yield* recordImage('show', imageCard.showImage(0.6));
   yield* recordImage(
     'change',
-    imageCard.changeImage({src: nextImage, width: 300, height: 300}, 0.8),
+    imageCard.changeImage(
+      {src: nextImage, width: 300, height: 300, description: 'Stanford bunny'},
+      0.8,
+    ),
   );
   const imageClone = imageCard.clone();
   view.add(imageClone);
   yield* recordImage('hide', imageCard.hideImage(0.6));
   yield* recordImage(
     'hidden-change',
-    imageCard.changeImage({src: originalImage, width: 400, height: 120}, 0.4),
+    imageCard.changeImage(
+      {src: originalImage, width: 400, height: 120, description: 'Cornell box'},
+      0.4,
+    ),
   );
   yield* imageCard.hideImage(0);
   yield* imageCard.showImage(0);
   yield* imageCard.showImage(0);
-  yield* imageCard.changeImage({src: nextImage, width: 300, height: 300}, 0);
+  yield* imageCard.changeImage(
+    {src: nextImage, width: 300, height: 300, description: 'Stanford bunny'},
+    0,
+  );
   const imageZeroDuration = imageSnapshot('zero');
   const imageChange: ThreadGenerator = yield imageCard.changeImage(
-    originalImage,
+    {src: originalImage, description: 'Cancelled'},
     1,
   );
   yield* waitFor(0.45);
@@ -256,6 +358,8 @@ export default makeScene2D(function* (view) {
   yield* waitFor(0.1);
   const imageCancelled = imageSnapshot('cancelled');
   Published.resolve({
+    optionalParts,
+    badgeLayout,
     styles,
     images,
     imageZeroDuration,

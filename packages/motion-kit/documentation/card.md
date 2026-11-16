@@ -16,8 +16,12 @@ Card
 └── CardFooter
 ```
 
-All parts are optional. `Card` extends `Rect`; its direct children are the
-public composition area. `CardContent` and `CardHeader` extend `Layout`,
+All parts are optional. Empty or whitespace-only titles and descriptions leave
+no layout space. `CardContent` also collapses when it has no children or only
+empty text nodes, removing the section gap. Text bindings and `changeText()` can
+restore those sections. Native `layoutSelf` overrides remain available for
+intentionally empty layout areas. `Card` extends `Rect`; its direct children are
+the public composition area. `CardContent` and `CardHeader` extend `Layout`,
 `CardFooter` extends `Rect`, and both text parts extend `Txt`. Use native props
 and refs to customize or animate them. Pass title and description strings
 through `text`. Set colors explicitly on arbitrary content nodes; the text parts
@@ -80,7 +84,8 @@ border visible.
 Set `visible={false}` to start without an image or its layout space. Use
 `showImage()` and `hideImage()` to expand or collapse that space with a fade.
 `changeImage()` accepts a source string or a `CardImageUpdate` object with
-`src`, optional frame `height`, and optional card `width`:
+`src`, optional frame `height`, optional card `width`, and an optional
+`description` to replace alongside the image:
 
 ```ts
 function* replaceCover(card: Card) {
@@ -93,10 +98,12 @@ function* replaceCover(card: Card) {
 
 The replacement loads before the timed animation starts. Card fades the old
 image out, resizes the frame and card together, then reveals the replacement. A
-width change also fades the text during reflow. Specified dimensions become the
-new frame height and card width. Cancelling before the resize finishes restores
-the original source and dimensions. A hidden image can change source and
-dimensions without becoming visible.
+width or description change also fades the text during reflow. The description
+changes while the image and text are faded out, so the new label appears with
+the new image. Specified dimensions become the new frame height and card width.
+Cancelling before the resize finishes restores the original source, dimensions,
+and description binding. A hidden image can change source and dimensions without
+becoming visible.
 
 The demo uses a local copy of
 [Cornell Box multispectral imaging.png](https://commons.wikimedia.org/wiki/File:Cornell_Box_multispectral_imaging.png)
@@ -135,7 +142,7 @@ function* presentCard(card: Card) {
   yield* card.hideFooter(0.8);
   yield* card.changeText(
     {
-      title: 'Follow-through',
+      title: 'Follow-Through',
       description: 'Let the movement settle after the main action.',
       content: 'A loose coat keeps moving after the character stops.',
       footer: 'Animation principle · 05 / 12',
