@@ -170,6 +170,24 @@ export const catalog: CatalogDefinition = {
       preview: true,
     },
     {
+      name: 'region-highlight',
+      title: 'Region Highlight',
+      description:
+        'Reveal a marker over source coordinates in an image or document.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/RegionHighlight.ts',
+          target: 'src/components/motion/components/RegionHighlight.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['theme'],
+      documentation: 'documentation/region-highlight.md',
+      example: 'examples/region-highlight.tsx',
+      preview: true,
+    },
+    {
       name: 'chart',
       title: 'Chart',
       description:
