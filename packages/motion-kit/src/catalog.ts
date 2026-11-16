@@ -240,5 +240,23 @@ export const catalog: CatalogDefinition = {
       example: 'examples/list.tsx',
       preview: true,
     },
+    {
+      name: 'video-card',
+      title: 'Video Card',
+      description:
+        'Aspect-preserving video covers, clip changes, and post-intro loops.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/VideoCard.ts',
+          target: 'src/components/motion/components/VideoCard.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['card'],
+      documentation: 'documentation/video-card.md',
+      example: 'examples/video-card.tsx',
+      preview: true,
+    },
   ],
 };
