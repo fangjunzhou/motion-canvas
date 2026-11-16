@@ -12,10 +12,14 @@ import {
 import {
   CompoundSignalContext,
   isReactive,
+  sequence,
   type SignalValue,
   type SimpleSignal,
+  type ThreadGenerator,
+  type TimingFunction,
 } from '@canvas-commons/core';
 import {defaultTheme, type MotionTheme} from '../foundations/theme';
+import {colorSwipe, pushIn} from '../motion/effects';
 
 /** Standard presentation layouts. */
 export type SlideVariant = 'title' | 'content' | 'section' | 'blank';
@@ -61,6 +65,7 @@ export class Slide extends Rect {
   declare public readonly theme: SimpleSignal<MotionTheme, this>;
 
   private readonly content: Layout;
+  private readonly headings: Txt[];
   private readonly defaultBindings = new Map<string, unknown>();
 
   public constructor({children, ...props}: SlideProps = {}) {
@@ -101,6 +106,7 @@ export class Slide extends Rect {
       opacity: () => (this.subtitle() ? 1 : 0),
     });
     subtitle.layoutSelf(() => (this.subtitle() ? null : false));
+    this.headings = [heading, subtitle];
     const header = new Layout({
       layout: true,
       direction: 'column',
@@ -141,6 +147,124 @@ export class Slide extends Rect {
   }
 
   /**
+   * Fade in the frame, then stagger wipes over the title, subtitle, and content.
+   * Empty sections are skipped and layout positions remain unchanged.
+   * @example
+   * ```ts
+   * yield* slide().swipeIn(1.2);
+   * ```
+   */
+  public *swipeIn(
+    duration = this.theme().motion.long,
+    easing: TimingFunction = this.theme().motion.enter,
+  ): ThreadGenerator {
+    yield* this.swipe(true, duration, easing);
+  }
+
+  /**
+   * Fade in the frame, then push in the title, subtitle, and content in order.
+   * Hidden headings are skipped. Native scene transitions can still surround it.
+   * @example
+   * ```ts
+   * yield* slide().enter(1.2);
+   * ```
+   */
+  public *enter(
+    duration = this.theme().motion.long,
+    easing: TimingFunction = this.theme().motion.enter,
+  ): ThreadGenerator {
+    const parts = this.animationParts();
+    const states = [this, ...parts].map(node => ({
+      node,
+      raw: node.opacity.context.raw(),
+    }));
+    const step = duration / (parts.length + 1);
+    let completed = false;
+    try {
+      this.opacity(0);
+      for (const part of parts) part.opacity(0);
+      yield* this.opacity(1, step, easing);
+      for (const part of parts) {
+        yield* pushIn(part, {
+          duration: step,
+          easing,
+          offset: [0, this.theme().spacing.medium],
+        });
+      }
+      completed = true;
+    } finally {
+      for (const {node, raw} of states) {
+        if (completed && node === this) continue;
+        if (raw === undefined) node.opacity.reset();
+        else node.opacity(raw);
+      }
+    }
+  }
+
+  /**
+   * Stagger wipes over the title, subtitle, and content, then fade out the frame.
+   * Layout and child opacity bindings are restored after completion or cancellation.
+   * @example
+   * ```ts
+   * yield* slide().swipeOut(0.8);
+   * ```
+   */
+  public *swipeOut(
+    duration = this.theme().motion.long,
+    easing: TimingFunction = this.theme().motion.exit,
+  ): ThreadGenerator {
+    yield* this.swipe(false, duration, easing);
+  }
+
+  private *swipe(
+    entering: boolean,
+    duration: number,
+    easing: TimingFunction,
+  ): ThreadGenerator {
+    if (!entering && this.opacity() === 0) return;
+    const parts = this.animationParts();
+    const states = [this, ...parts].map(node => ({
+      node,
+      raw: node.opacity.context.raw(),
+    }));
+    const wipeTime = parts.length ? duration * 0.8 : 0;
+    const interval = Math.min(
+      this.theme().motion.short / 2,
+      wipeTime / Math.max(1, parts.length),
+    );
+    const passTime = wipeTime - interval * Math.max(0, parts.length - 1);
+    const fadeTime = duration - wipeTime;
+    let completed = false;
+    try {
+      if (entering) {
+        this.opacity(0);
+        for (const part of parts) part.opacity(0);
+      }
+      yield this;
+      if (entering) yield* this.opacity(1, fadeTime, easing);
+      yield* sequence(
+        interval,
+        ...parts.map(part =>
+          colorSwipe(part, {
+            duration: passTime,
+            easing,
+            colors: [this.theme().colors.accent],
+            hide: entering ? undefined : part,
+          }),
+        ),
+      );
+      if (!entering) yield* this.opacity(0, fadeTime, easing);
+      completed = true;
+    } finally {
+      for (const {node, raw} of states) {
+        if (completed && node === this) continue;
+        if (raw === undefined) node.opacity.reset();
+        else node.opacity(raw);
+      }
+    }
+  }
+
+  /**
    * Copy the slide's content into a fresh frame with its own heading bindings.
    * @example
    * ```ts
@@ -171,6 +295,15 @@ export class Slide extends Rect {
 
   private centered(): boolean {
     return this.variant() === 'title' || this.variant() === 'section';
+  }
+
+  private animationParts(): Layout[] {
+    const parts: Layout[] =
+      this.variant() === 'blank'
+        ? []
+        : this.headings.filter(heading => heading.text().length > 0);
+    if (this.content.children().length) parts.push(this.content);
+    return parts;
   }
 
   protected getDefaultJustifyContent(): 'center' | 'start' {

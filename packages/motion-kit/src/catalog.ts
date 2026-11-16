@@ -112,7 +112,7 @@ export const catalog: CatalogDefinition = {
         },
       ],
       dependencies: ['@canvas-commons/2d@^0.4.0'],
-      requires: ['theme'],
+      requires: ['theme', 'effects'],
       documentation: 'documentation/slide.md',
       example: 'examples/slide.tsx',
       preview: true,

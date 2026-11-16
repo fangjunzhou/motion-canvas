@@ -65,6 +65,33 @@ content, and binds the copy's text and theme to its own signals.
 ## Transitions
 
 Slides start fully visible and create no animation threads. Set `opacity={0}`
-and schedule native opacity or transform animations from the scene. The example
-fades each layout in and out. The showcase uses `ContentSlide` in all three
-scenes and retains its existing fade transitions.
+and schedule a component method or native animation from the scene. The example
+uses `swipeIn()` and `swipeOut()` for each layout. The showcase's opening title
+uses both methods; its content scenes retain their fade transitions.
+
+## Heading entrance
+
+`enter(duration?, easing?)` fades in the frame, then moves and fades the title,
+subtitle, and content into place in order. Empty headings are skipped. The whole
+sequence uses the supplied duration and the slide's motion defaults. It animates
+native translation, so the layout stays fixed. Repeating the method restarts the
+entrance; zero duration reveals it immediately. Cancelling restores opacity and
+translation bindings. Scene transitions remain controlled by the calling scene.
+
+## Swipe transitions
+
+`swipeIn(duration?, easing?)` fades in the frame, then reveals the title,
+subtitle, and content with accent-colored wipes. `swipeOut(duration?, easing?)`
+wipes those same sections away in the same order, then fades out the frame. Each
+wipe starts a little after the previous one, with a gap of
+`theme.motion.short / 2` (0.1 seconds by default). The gap shortens when needed
+to keep the whole sequence within the supplied duration. Both methods default to
+`theme.motion.long`; entrance easing comes from `theme.motion.enter` and exit
+easing from `theme.motion.exit`. The wipe fits the text glyphs and leaves layout
+positions unchanged. The method is shared by `TitleSlide`, `SectionSlide`,
+`ContentSlide`, and `BlankSlide`. Empty headings are skipped; all public content
+wipes as one group. Images finish loading before the animation starts.
+
+Child opacity bindings are restored after each transition, so the same slide can
+enter and exit again. Zero duration applies the final state immediately.
+Cancelling removes the wipe overlays and restores the original opacity bindings.

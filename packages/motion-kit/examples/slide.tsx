@@ -21,36 +21,41 @@ export default makeScene2D(function* (view) {
       subtitle: 'Change one thing at a time.',
       size: () => view.size(),
     }),
-    <ContentSlide
-      title="Follow the Light"
-      subtitle="Use the content area for diagrams, images, or native components."
-      size={() => view.size()}
-    >
-      <Layout grow={1} alignItems="center" justifyContent="center">
-        <Txt
-          text="Light reflects from one surface to the next."
-          textWrap
-          fill={theme.colors.foreground}
-        />
-      </Layout>
-    </ContentSlide>,
-    <BlankSlide size={() => view.size()}>
-      <Layout grow={1} alignItems="center" justifyContent="center">
-        <Txt
-          text="Leave Room for the Image"
-          fontSize={theme.typography.heading}
-          fill={theme.colors.foreground}
-        />
-      </Layout>
-    </BlankSlide>,
+    new ContentSlide({
+      title: 'Follow the Light',
+      subtitle:
+        'Use the content area for diagrams, images, or native components.',
+      size: () => view.size(),
+      children: (
+        <Layout grow={1} alignItems="center" justifyContent="center">
+          <Txt
+            text="Light reflects from one surface to the next."
+            textWrap
+            fill={theme.colors.foreground}
+          />
+        </Layout>
+      ),
+    }),
+    new BlankSlide({
+      size: () => view.size(),
+      children: (
+        <Layout grow={1} alignItems="center" justifyContent="center">
+          <Txt
+            text="Leave Room for the Image"
+            fontSize={theme.typography.heading}
+            fill={theme.colors.foreground}
+          />
+        </Layout>
+      ),
+    }),
   ];
   view.fill(theme.colors.background);
   for (const slide of slides) {
     slide.opacity(0);
     view.add(slide);
-    yield* slide.opacity(1, theme.motion.medium, theme.motion.enter);
+    yield* slide.swipeIn();
     yield* waitFor(1.6);
-    yield* slide.opacity(0, theme.motion.medium, theme.motion.exit);
+    yield* slide.swipeOut();
     slide.remove();
   }
 });
