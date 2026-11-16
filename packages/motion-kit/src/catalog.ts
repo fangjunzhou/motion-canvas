@@ -63,5 +63,23 @@ export const catalog: CatalogDefinition = {
       example: 'examples/card.tsx',
       preview: true,
     },
+    {
+      name: 'badge',
+      title: 'Badge',
+      description:
+        'Compact native labels with reactive text and six visual variants.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/Badge.ts',
+          target: 'src/components/motion/components/Badge.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['theme'],
+      documentation: 'documentation/badge.md',
+      example: 'examples/badge.tsx',
+      preview: true,
+    },
   ],
 };
