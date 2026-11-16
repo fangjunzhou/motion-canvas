@@ -2,12 +2,13 @@ import {Layout, makeScene2D} from '@canvas-commons/2d';
 import {createRef, waitFor} from '@canvas-commons/core';
 import {Highlight} from '../../registry/components/Highlight';
 import {ContentSlide} from '../../registry/components/Slide';
-import {catppuccinThemes} from '../../registry/foundations/theme';
+import {fitSlide} from '../layout';
+import {demoTheme} from '../theme';
 
 export default makeScene2D(function* (view) {
   const slide = createRef<ContentSlide>();
   const marker = createRef<Highlight>();
-  const theme = catppuccinThemes.latte;
+  const theme = demoTheme;
   view.fill(theme.colors.background);
   view.add(
     <ContentSlide
@@ -15,7 +16,7 @@ export default makeScene2D(function* (view) {
       theme={theme}
       title="Text Highlight"
       subtitle="Straight and hand-drawn markers."
-      size={() => view.size()}
+      {...fitSlide(view)}
       opacity={0}
     >
       <Layout grow={1} justifyContent="center" alignItems="center">
@@ -24,11 +25,11 @@ export default makeScene2D(function* (view) {
           theme={theme}
           text="A small pause makes the next movement easier to follow."
           selection="small pause"
-          width={1100}
-          fontSize={80}
+          width="70%"
+          fontSize={theme.typography.heading}
           fontWeight={600}
-          color="rgba(255, 236, 79, 0.62)"
-          markerPadding={[0, 12]}
+          color={theme.colors.highlight}
+          markerPadding={[0, theme.spacing.small]}
           roughness={2.3}
           bowing={0}
         />
