@@ -152,5 +152,22 @@ export const catalog: CatalogDefinition = {
       example: 'examples/ink-arrow.tsx',
       preview: true,
     },
+    {
+      name: 'effects',
+      title: 'Motion Effects',
+      description: 'Push, flicker, wipe, and transform native scene nodes.',
+      layer: 'motion',
+      files: [
+        {
+          path: 'registry/motion/effects.ts',
+          target: 'src/components/motion/motion/effects.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['theme'],
+      documentation: 'documentation/effects.md',
+      example: 'examples/effects.tsx',
+      preview: true,
+    },
   ],
 };
