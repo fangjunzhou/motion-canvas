@@ -81,5 +81,23 @@ export const catalog: CatalogDefinition = {
       example: 'examples/badge.tsx',
       preview: true,
     },
+    {
+      name: 'progress',
+      title: 'Progress',
+      description:
+        'A reactive progress track with bounded values and themed colors.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/Progress.ts',
+          target: 'src/components/motion/components/Progress.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['theme'],
+      documentation: 'documentation/progress.md',
+      example: 'examples/progress.tsx',
+      preview: true,
+    },
   ],
 };
