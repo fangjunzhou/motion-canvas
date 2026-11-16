@@ -15,12 +15,14 @@ import {
   type TxtProps,
 } from '@canvas-commons/2d';
 import {
+  BBox,
   CompoundSignalContext,
   Spacing,
   Vector2,
   all,
   sequence,
   tween,
+  type PossibleBBox,
   type Signal,
   type SignalValue,
   type SimpleSignal,
@@ -61,6 +63,8 @@ export type CardImageFit = 'cover' | 'contain';
 export interface CardImageProps extends ImgProps {
   visible?: SignalValue<boolean>;
   fit?: SignalValue<CardImageFit>;
+  /** Optional source-pixel crop, fitted into the image frame. */
+  crop?: SignalValue<PossibleBBox | null>;
 }
 
 /** A replacement image with optional frame dimensions and description. */
@@ -618,16 +622,23 @@ export class Card extends Rect {
       }));
     const restoreWidth = preserveSignal(this.width);
     const restoreHeight = preserveSignal(this.height);
+    const restoreBasis = preserveSignal(this.basis);
+    const direction = this.parentTransform()?.direction();
+    const horizontal = direction === 'row' || direction === 'row-reverse';
     const restoreShrink = parts.map(part => preserveSignal(part.shrink));
     // Text must keep its natural height while the outer frame catches up.
     for (const part of parts) part.shrink(0);
+    // A zero flex basis otherwise collapses a growing card while it is locked.
+    this.basis(horizontal ? before.x : before.y);
     this.lockLayout();
     try {
       // Keep one Yoga tree throughout the resize so text uses the same
       // pixel rounding before, during, and after the animation.
       yield* tween(duration, value => {
         const progress = easing(value);
-        this.size(Vector2.lerp(before, after, progress));
+        const size = Vector2.lerp(before, after, progress);
+        this.size(size);
+        this.basis(horizontal ? size.x : size.y);
         for (const {part, from, to} of images) {
           part.height(from + (to - from) * progress);
         }
@@ -643,6 +654,7 @@ export class Card extends Rect {
       this.releaseLayout();
       restoreWidth();
       restoreHeight();
+      restoreBasis();
       for (const image of images) image.restore();
       for (const restore of restoreShrink) restore();
       for (const motion of motions) motion.restore();
@@ -740,6 +752,9 @@ export class Card extends Rect {
  */
 @nodeName('CardImage')
 export class CardImage extends Img {
+  @initial(null)
+  @signal()
+  declare public readonly crop: SimpleSignal<PossibleBBox | null, this>;
   /** Whether the image occupies layout space and is drawn by default. */
   @initial(true)
   @signal()
@@ -775,18 +790,45 @@ export class CardImage extends Img {
     this.drawShape(context);
     const image = this.image();
     if (this.alpha() > 0 && image.naturalWidth > 0 && image.naturalHeight > 0) {
-      const scale = (this.fit() === 'cover' ? Math.max : Math.min)(
-        this.width() / image.naturalWidth,
-        this.height() / image.naturalHeight,
+      const cropValue = this.crop();
+      const requested =
+        cropValue === null
+          ? new BBox(0, 0, image.naturalWidth, image.naturalHeight)
+          : new BBox(cropValue);
+      const x = Math.max(0, Math.min(image.naturalWidth, requested.x));
+      const y = Math.max(0, Math.min(image.naturalHeight, requested.y));
+      const width = Math.max(
+        0,
+        Math.min(image.naturalWidth, requested.right) - x,
       );
-      const width = image.naturalWidth * scale;
-      const height = image.naturalHeight * scale;
-      context.save();
-      context.clip(this.getPath());
-      context.globalAlpha *= this.alpha();
-      context.imageSmoothingEnabled = this.smoothing();
-      context.drawImage(image, -width / 2, -height / 2, width, height);
-      context.restore();
+      const height = Math.max(
+        0,
+        Math.min(image.naturalHeight, requested.bottom) - y,
+      );
+      if (width > 0 && height > 0) {
+        const scale = (this.fit() === 'cover' ? Math.max : Math.min)(
+          this.width() / width,
+          this.height() / height,
+        );
+        const drawnWidth = width * scale;
+        const drawnHeight = height * scale;
+        context.save();
+        context.clip(this.getPath());
+        context.globalAlpha *= this.alpha();
+        context.imageSmoothingEnabled = this.smoothing();
+        context.drawImage(
+          image,
+          x,
+          y,
+          width,
+          height,
+          -drawnWidth / 2,
+          -drawnHeight / 2,
+          drawnWidth,
+          drawnHeight,
+        );
+        context.restore();
+      }
     }
     if (this.clip()) context.clip(this.getPath());
     this.drawChildren(context);

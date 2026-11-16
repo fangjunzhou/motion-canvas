@@ -86,6 +86,10 @@ the edges. Both modes use the frame's dimensions; changing source does not
 stretch the image. The card clips the image to its shape and keeps any explicit
 border visible.
 
+The optional `crop` signal selects a source-pixel `BBox` before fitting. Bounds
+are intersected with the image; an empty intersection paints no image. Omit it
+to use the full source.
+
 Set `visible={false}` to start without an image or its layout space. Use
 `showImage()` and `hideImage()` to expand or collapse that space with a fade.
 `changeImage()` accepts a source string or a `CardImageUpdate` object with

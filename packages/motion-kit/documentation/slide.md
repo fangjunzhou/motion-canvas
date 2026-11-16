@@ -62,6 +62,12 @@ scene units, and font sizes stay at the theme's values when the canvas changes.
 Cloning rebuilds the internal heading and content wrapper, clones public
 content, and binds the copy's text and theme to its own signals.
 
+The public `heading` and `subtitleHeading` text nodes and `content` layout allow
+scene-scheduled text morphs and content fades without reconstructing the frame.
+For example, `yield* slide.heading.text("Next topic", 0.45)` carries the
+existing heading into the next step while `slide.content.opacity(...)` controls
+its body.
+
 ## Transitions
 
 Slides start fully visible and create no animation threads. Set `opacity={0}`

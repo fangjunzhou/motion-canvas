@@ -64,7 +64,9 @@ export class Slide extends Rect {
   @signal()
   declare public readonly theme: SimpleSignal<MotionTheme, this>;
 
-  private readonly content: Layout;
+  public readonly content: Layout;
+  public readonly heading: Txt;
+  public readonly subtitleHeading: Txt;
   private readonly headings: Txt[];
   private readonly defaultBindings = new Map<string, unknown>();
 
@@ -105,6 +107,8 @@ export class Slide extends Rect {
       textAlign: () => (this.variant() === 'content' ? 'left' : 'center'),
       opacity: () => (this.subtitle() ? 1 : 0),
     });
+    this.heading = heading;
+    this.subtitleHeading = subtitle;
     subtitle.layoutSelf(() => (this.subtitle() ? null : false));
     this.headings = [heading, subtitle];
     const header = new Layout({
@@ -279,6 +283,24 @@ export class Slide extends Rect {
         : this.content.children().map(child => child.clone()),
       ...props,
     });
+  }
+
+  /**
+   * Freeze public content without copying the internal header twice.
+   * @example
+   * ```ts
+   * const outgoing = slide.snapshotClone();
+   * ```
+   */
+  public override snapshotClone(props: NodeState = {}): this {
+    const snapshot = {
+      ...this.getState(),
+      title: this.heading.text(),
+      subtitle: this.subtitleHeading.text(),
+      children: this.content.children().map(child => child.snapshotClone()),
+      ...props,
+    };
+    return this.instantiate(snapshot);
   }
 
   public override instantiate(props: NodeProps = {}): this {
