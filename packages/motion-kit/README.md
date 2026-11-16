@@ -2,9 +2,9 @@
 
 A private source catalog for personal Canvas Commons animations. The initial
 toolkit establishes foundations, a motion contract, registry generation, and
-documentation. The component catalog includes Card, Badge, and Progress. Further
-components and blocks are added when real animations establish their
-requirements.
+documentation. The component catalog includes Card, Badge, Progress, and
+presentation slides. Further components and blocks are added when real
+animations establish their requirements.
 
 ## Working locally
 
@@ -24,15 +24,16 @@ The gallery lives at `/motion-kit` on the documentation server. `docs:dev` and
 documentation examples still use the repository's `pnpm examples:build` command.
 
 The **Motion Kit Showcase** is the first project under **Try the editor** at
-`/editor/`, with a direct route at `/editor/motion-kit-showcase/`. Its three
-scenes use Cards to present the four Catppuccin palettes, demonstrate shared
-signals and scene timing, and explain two animation principles. The project
-lives in `packages/motion-kit/demo/motion-kit-showcase.ts` and imports the
-canonical registry source directly. Run `pnpm motion-kit:dev` to open its own
-editor locally. `pnpm motion-kit:demo:build` bundles the demo into
-`dist/static/demos`; the docs development and build commands run this
-automatically after generating the registry. The demo scenes and shared
-presentation layout live under `demo/`.
+`/editor/`, with a direct route at `/editor/motion-kit-showcase/`. An opening
+title slide introduces the demo. The following three scenes use Cards to present
+the four Catppuccin palettes, demonstrate shared signals and scene timing, and
+explain two animation principles. The project lives in
+`packages/motion-kit/demo/motion-kit-showcase.ts` and imports the canonical
+registry source directly. Run `pnpm motion-kit:dev` to open its own editor
+locally. `pnpm motion-kit:demo:build` bundles the demo into `dist/static/demos`;
+the docs development and build commands run this automatically after generating
+the registry. The demo scenes live under `demo/`; their shared presentation
+frame is the registry's `ContentSlide` component.
 
 The Card scene demonstrates the composable `CardHeader`, `CardTitle`,
 `CardDescription`, `CardContent`, and `CardFooter` nodes. It reveals the text in
@@ -41,6 +42,11 @@ also shows and hides a Cornell box cover, then changes it to a square Stanford
 bunny image. Image credits and licenses are in `demo/assets/README.md`. Copy the
 `card` registry item with its `theme` dependency to use these parts in your own
 scenes.
+
+The `slide` registry item includes `TitleSlide`, `ContentSlide`, `SectionSlide`,
+and `BlankSlide`. Their default canvas is 1920 × 1080, with presentation title
+sizes based on Keynote’s White widescreen template. Use a slide’s `theme` prop
+to customize its typography, padding, and gaps.
 
 ## Layers
 
@@ -78,10 +84,11 @@ const theme = createTheme({flavor: 'latte', spacing: {medium: 40}});
 frozen presets directly. `createTheme()` and existing override-only calls use
 Mocha.
 
-Typography roles cover scene headings, titles, body text, labels, and captions.
-The `padding` scale controls container insets; `spacing` controls layout gaps.
-Both offer `small`, `medium`, and `large` sizes. Components use these defaults,
-so scenes only need styling props when they differ from the theme.
+Typography roles cover presentation titles, slide headings, subtitles, component
+titles, body text, labels, and captions. The `padding` scale controls container
+insets; `spacing` controls layout gaps. Both offer `small`, `medium`, and
+`large` sizes. Components use these defaults, so scenes only need styling props
+when they differ from the theme.
 
 ## Source ownership
 
