@@ -53,6 +53,8 @@ export default function HomeReel({className, style}: HomeReelProps) {
   }, []);
 
   useEffect(() => {
+    // React assigns matching custom-element properties, but these are getter-only.
+    ref.current?.setAttribute('auto', '');
     const apply = () =>
       ref.current?.setAttribute('variables', JSON.stringify(getThemeColors()));
     apply();
@@ -65,8 +67,6 @@ export default function HomeReel({className, style}: HomeReelProps) {
         ref={ref}
         class={styles.reelPlayer}
         src={`${siteConfig.baseUrl}examples/home-reel.js`}
-        variables={JSON.stringify(getThemeColors())}
-        auto
         paused={paused || undefined}
       />
       <button
