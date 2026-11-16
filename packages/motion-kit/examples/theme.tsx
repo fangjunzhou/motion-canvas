@@ -42,13 +42,13 @@ export default makeScene2D(function* (view) {
       radius={theme.radius.medium}
       fill={theme.colors.surface}
       stroke={theme.colors.border}
-      lineWidth={2}
+      lineWidth={4}
       fontFamily={theme.typography.fontFamily}
     >
       <Txt
         width="100%"
         textWrap
-        text="Your animation, your source."
+        text="Your Animation, Your Source"
         fontSize={theme.typography.heading}
         fill={theme.colors.foreground}
       />
@@ -81,14 +81,14 @@ export default makeScene2D(function* (view) {
               ref={ref}
               layout
               direction="column"
-              width={400}
-              height={196}
+              width={720}
+              height={360}
               padding={theme.padding.medium}
               gap={theme.spacing.small}
               radius={theme.radius.medium}
               fill={theme.colors.surface}
               stroke={theme.colors.border}
-              lineWidth={2}
+              lineWidth={4}
               opacity={0}
               fontFamily={theme.typography.fontFamily}
             >

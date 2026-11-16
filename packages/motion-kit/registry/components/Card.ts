@@ -171,7 +171,7 @@ export class Card extends Rect {
       layout: true,
       direction: 'column',
       clip: true,
-      lineWidth: 1,
+      lineWidth: 2,
       gap: () =>
         this.spacing.isInitial()
           ? this.theme().spacing[this.variant() === 'sm' ? 'small' : 'medium']
@@ -943,7 +943,7 @@ export class CardFooter extends Rect {
     context.moveTo(-this.width() / 2, -this.height() / 2);
     context.lineTo(this.width() / 2, -this.height() / 2);
     context.strokeStyle = themeOf(this).colors.border;
-    context.lineWidth = 1;
+    context.lineWidth = 2;
     context.stroke();
   }
 }

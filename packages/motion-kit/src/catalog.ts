@@ -99,5 +99,23 @@ export const catalog: CatalogDefinition = {
       example: 'examples/progress.tsx',
       preview: true,
     },
+    {
+      name: 'slide',
+      title: 'Presentation slides',
+      description:
+        'Widescreen title, content, section, and blank layouts for animated presentations.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/Slide.ts',
+          target: 'src/components/motion/components/Slide.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['theme'],
+      documentation: 'documentation/slide.md',
+      example: 'examples/slide.tsx',
+      preview: true,
+    },
   ],
 };

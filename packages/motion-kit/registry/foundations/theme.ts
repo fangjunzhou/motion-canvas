@@ -51,7 +51,9 @@ export interface MotionTheme {
   >;
   readonly typography: Readonly<{
     fontFamily: string;
+    display: number;
     heading: number;
+    subtitle: number;
     title: number;
     body: number;
     label: number;
@@ -92,11 +94,13 @@ export type ThemeOverrides = {
 const SharedTokens = Object.freeze({
   typography: Object.freeze({
     fontFamily: 'sans-serif',
-    heading: 48,
-    title: 32,
-    body: 24,
-    label: 22,
-    caption: 20,
+    display: 112,
+    heading: 84,
+    subtitle: 54,
+    title: 54,
+    body: 48,
+    label: 32,
+    caption: 30,
   }),
   padding: Object.freeze({small: 16, medium: 32, large: 64}),
   spacing: Object.freeze({small: 16, medium: 32, large: 64}),

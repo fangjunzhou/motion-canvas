@@ -8,7 +8,7 @@ Use `text` for the label, `variant` for its appearance, and `theme` for its
 Catppuccin colors. All three accept core signal bindings. The default theme is
 Mocha. `textColor` overrides the label color; native `fill` and `stroke`
 override the background and border. Native font, size, transform, and layout
-props remain available. The label uses `theme.typography.label` (22), stays on
+props remain available. The label uses `theme.typography.label` (32), stays on
 one line, and the badge sizes to its content. Padding, border width, and pill
 shape have built-in defaults; native props can override them.
 

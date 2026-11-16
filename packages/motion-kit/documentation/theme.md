@@ -57,18 +57,21 @@ containing rectangle's automatic height.
 yield * caption().text(nextCaption, theme.motion.long, theme.motion.emphasize);
 ```
 
-| Group        | Tokens                                                             |
-| ------------ | ------------------------------------------------------------------ |
-| `colors`     | `background`, `surface`, `foreground`, `muted`, `accent`, `border` |
-| `typography` | `fontFamily`, `heading`, `title`, `body`, `label`, `caption`       |
-| `padding`    | `small`, `medium`, `large`                                         |
-| `spacing`    | `small`, `medium`, `large`                                         |
-| `radius`     | `small`, `medium`                                                  |
-| `motion`     | `short`, `medium`, `long`, `enter`, `exit`, `emphasize`            |
+| Group        | Tokens                                                                              |
+| ------------ | ----------------------------------------------------------------------------------- |
+| `colors`     | `background`, `surface`, `foreground`, `muted`, `accent`, `border`                  |
+| `typography` | `fontFamily`, `display`, `heading`, `subtitle`, `title`, `body`, `label`, `caption` |
+| `padding`    | `small`, `medium`, `large`                                                          |
+| `spacing`    | `small`, `medium`, `large`                                                          |
+| `radius`     | `small`, `medium`                                                                   |
+| `motion`     | `short`, `medium`, `long`, `enter`, `exit`, `emphasize`                             |
 
-Typography roles default to 48 for scene headings, 32 for titles, 24 for body
-text, 22 for labels, and 20 for captions. Card titles, content, and footers use
-`title`, `body`, and `caption`; Badge uses `label`.
+Typography roles default to 112 for presentation titles (`display`), 84 for
+slide headings, 54 for centered subtitles and component titles, 48 for body
+text, 32 for labels, and 30 for captions. The presentation sizes follow
+Keynote’s bundled White widescreen template; the Slide documentation describes
+the reference. Card titles, content, and footers use `title`, `body`, and
+`caption`; Badge uses `label`.
 
 Padding sets the inset inside a container. Spacing sets the gap between
 elements. Both scales default to 16, 32, and 64 for `small`, `medium`, and

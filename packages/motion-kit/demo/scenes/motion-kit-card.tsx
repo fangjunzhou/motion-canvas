@@ -9,23 +9,24 @@ import {
   CardImage,
   CardTitle,
 } from '../../registry/components/Card';
+import {ContentSlide} from '../../registry/components/Slide';
+import {defaultTheme} from '../../registry/foundations/theme';
 import cornellBox from '../assets/cornell-box.png';
 import stanfordBunny from '../assets/stanford-bunny.png';
-import {MotionKitStage, ShowcaseTheme} from '../components/MotionKitStage';
 
 export default makeScene2D(function* (view) {
-  const theme = ShowcaseTheme;
+  const theme = defaultTheme;
 
-  const stage = createRef<MotionKitStage>();
+  const stage = createRef<ContentSlide>();
   const card = createRef<Card>();
 
-  view.fill(ShowcaseTheme.colors.background);
+  view.fill(defaultTheme.colors.background);
   view.add(
-    <MotionKitStage
+    <ContentSlide
       ref={stage}
       opacity={0}
       size={() => view.size()}
-      heading="Card"
+      title="Card"
       subtitle="Use a card to group related information in a scene."
     >
       <Layout grow={1} alignItems="center" justifyContent="center">
@@ -43,7 +44,7 @@ export default makeScene2D(function* (view) {
           <CardContent>
             <Txt
               textWrap
-              text="A ball dips down before it jumps. This small movement in the opposite direction helps the viewer follow the main action."
+              text="A ball dips down before it jumps. That small movement prepares the viewer for the jump."
               fill={theme.colors.foreground}
             />
           </CardContent>
@@ -55,13 +56,13 @@ export default makeScene2D(function* (view) {
           </CardFooter>
         </Card>
       </Layout>
-    </MotionKitStage>,
+    </ContentSlide>,
   );
 
   yield* stage().opacity(
     1,
-    ShowcaseTheme.motion.medium,
-    ShowcaseTheme.motion.enter,
+    defaultTheme.motion.medium,
+    defaultTheme.motion.enter,
   );
   yield* card().enter(1.2);
   yield* waitFor(0.8);
@@ -71,10 +72,10 @@ export default makeScene2D(function* (view) {
   yield* waitFor(0.3);
   yield* card().changeText(
     {
-      title: 'Follow-through',
+      title: 'Follow-Through',
       description: 'Let the movement settle after the main action.',
       content:
-        'After a character stops, a loose coat can swing past the body before settling into place. Let that movement finish over a few extra frames. The delay helps the viewer feel the weight of the fabric and keeps the stop from looking abrupt.',
+        'After a character stops, a loose coat keeps swinging for a few frames. That delay gives the fabric a sense of weight.',
       footer: 'Animation principle · 05 / 12',
       width: 840,
     },
@@ -86,10 +87,10 @@ export default makeScene2D(function* (view) {
   yield* card().hideFooter(0.6);
   yield* card().changeText(
     {
-      title: 'Graphics test models',
-      description: 'Cornell box and Stanford bunny.',
-      content: 'Lighting and geometry.',
-      footer: 'Cornell: Czerniawskimc (CC0) · Bunny: G1malitm (CC BY-SA 4.0)',
+      title: 'Test Models',
+      description: 'Cornell box',
+      content: '',
+      footer: 'Cornell: CC0 · Bunny: G1malitm · CC BY-SA 4.0',
     },
     1.2,
   );
@@ -101,11 +102,19 @@ export default makeScene2D(function* (view) {
   yield* card().showImage(0.8);
   yield* waitFor(1);
   yield* card().hideFooter(0.6);
-  yield* card().changeImage({src: stanfordBunny, width: 560, height: 560}, 1.2);
+  yield* card().changeImage(
+    {
+      src: stanfordBunny,
+      width: 560,
+      height: 560,
+      description: 'Stanford bunny',
+    },
+    1.2,
+  );
   yield* waitFor(2);
   yield* stage().opacity(
     0,
-    ShowcaseTheme.motion.medium,
-    ShowcaseTheme.motion.exit,
+    defaultTheme.motion.medium,
+    defaultTheme.motion.exit,
   );
 });

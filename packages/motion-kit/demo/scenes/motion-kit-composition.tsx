@@ -17,21 +17,22 @@ import {
   CardTitle,
 } from '../../registry/components/Card';
 import {Progress} from '../../registry/components/Progress';
+import {ContentSlide} from '../../registry/components/Slide';
+import {defaultTheme} from '../../registry/foundations/theme';
 import type {MotionMethods} from '../../registry/motion/contracts';
-import {MotionKitStage, ShowcaseTheme} from '../components/MotionKitStage';
 
 const Steps = [
   {
     name: 'enter',
-    explanation: 'Fade the panel in as it grows to full size.',
+    explanation: 'Fade in and grow.',
   },
   {
     name: 'emphasize',
-    explanation: 'Briefly enlarge the panel and brighten its border.',
+    explanation: 'Pulse size and border.',
   },
   {
     name: 'exit',
-    explanation: 'Fade the panel out as it shrinks to 94% of its size.',
+    explanation: 'Fade out and shrink.',
   },
 ];
 
@@ -46,8 +47,8 @@ const CurvePoints = [
 ] satisfies readonly [number, number][];
 
 export default makeScene2D(function* (view) {
-  const theme = ShowcaseTheme;
-  const stage = createRef<MotionKitStage>();
+  const theme = defaultTheme;
+  const stage = createRef<ContentSlide>();
   const panel = createRef<Card>();
   const chart = createRef<Layout>();
   const progress = createSignal(0);
@@ -91,11 +92,11 @@ export default makeScene2D(function* (view) {
 
   view.fill(theme.colors.background);
   view.add(
-    <MotionKitStage
+    <ContentSlide
       ref={stage}
       opacity={0}
       size={() => view.size()}
-      heading="Scene composition and animation"
+      title="Scene Composition and Animation"
       subtitle="Watch one signal update the label, bar, and curve together."
     >
       <Layout grow={1} gap={theme.spacing.medium}>
@@ -109,8 +110,8 @@ export default makeScene2D(function* (view) {
           scale={0.94}
         >
           <CardHeader>
-            <CardTitle text="Shared progress" />
-            <CardDescription text="The bar's width and the visible curve follow the same progress value." />
+            <CardTitle text="Shared Progress" />
+            <CardDescription text="One signal drives the bar and curve." />
           </CardHeader>
           <CardContent grow={1} minHeight={0} gap={theme.spacing.medium}>
             <Layout ref={chart} grow={1} basis={0} minHeight={0}>
@@ -129,7 +130,7 @@ export default makeScene2D(function* (view) {
                 end={progress}
                 radius={theme.radius.medium}
                 stroke={theme.colors.accent}
-                lineWidth={theme.spacing.small / 4}
+                lineWidth={8}
                 lineCap="round"
               />
             </Layout>
@@ -153,10 +154,7 @@ export default makeScene2D(function* (view) {
               variant="secondary"
               alignSelf="center"
             />
-            <Txt
-              text="The scene controls when these animations run."
-              fill={theme.colors.muted}
-            />
+            <Txt text="The scene controls timing." fill={theme.colors.muted} />
           </CardFooter>
         </Card>
         <Layout
@@ -195,7 +193,7 @@ export default makeScene2D(function* (view) {
           ))}
         </Layout>
       </Layout>
-    </MotionKitStage>,
+    </ContentSlide>,
   );
 
   yield* all(

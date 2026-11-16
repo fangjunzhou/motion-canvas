@@ -82,7 +82,7 @@ export class Badge extends Rect {
       padding: [4, 12],
       gap: 6,
       radius: 999,
-      lineWidth: 1,
+      lineWidth: 2,
       children,
       ...props,
     });

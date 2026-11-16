@@ -34,7 +34,7 @@ inherit their semantic colors from the nearest card.
 | `theme`            | `defaultTheme` (Mocha)                                        | Reactive theme for surfaces, typography, and parts.                     |
 | `variant`          | `"default"`                                                   | `"sm"` selects small padding and gap tokens.                            |
 | `spacing`          | Theme `padding.medium` (32), or `padding.small` (16) for `sm` | Insets and footer padding; an explicit value also sets the section gap. |
-| Native `RectProps` | Vertical layout, clipped, rounded, 1-unit border              | Dimensions, transforms, layout, styling, and children.                  |
+| Native `RectProps` | Vertical layout, clipped, rounded, 2-unit border              | Dimensions, transforms, layout, styling, and children.                  |
 
 The reference's `size="sm"` becomes `variant="sm"` because native `size`
 controls the scene node's dimensions. The `spacing` signal defaults to the
@@ -44,8 +44,8 @@ to both insets and section gaps, as a number or a core signal binding. Explicit
 `gap`, `padding`, and per-side padding props override their corresponding
 defaults.
 
-Titles use `theme.typography.title` (32), content uses `body` (24), and footer
-text uses `caption` (20). Native `fontSize` props override these defaults.
+Titles use `theme.typography.title` (54), content uses `body` (48), and footer
+text uses `caption` (30). Native `fontSize` props override these defaults.
 
 `CardHeader` reserves space for a direct `CardAction` child, aligned to its
 top-right inset. Give the card a width so text can wrap into the remaining

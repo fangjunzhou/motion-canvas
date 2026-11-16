@@ -53,10 +53,10 @@ describe('Card animations', () => {
       gap: 32,
       contentPadding: 32,
       footerPadding: 32,
-      titleSize: 32,
-      bodySize: 24,
-      footerSize: 20,
-      badgeSize: 22,
+      titleSize: 54,
+      bodySize: 48,
+      footerSize: 30,
+      badgeSize: 32,
     });
     expect(probe.styles.original).toEqual(probe.styles.defaults);
     expect(probe.styles.clone).toEqual({
@@ -67,7 +67,7 @@ describe('Card animations', () => {
       titleSize: 36,
       bodySize: 26,
       footerSize: 18,
-      badgeSize: 22,
+      badgeSize: 32,
     });
     expect(probe.styles.updated).toEqual({
       ...probe.styles.clone,
@@ -91,9 +91,9 @@ describe('Card animations', () => {
       gap: 6,
       contentPadding: 7,
       footerPadding: 32,
-      titleSize: 32,
-      bodySize: 24,
-      footerSize: 20,
+      titleSize: 54,
+      bodySize: 48,
+      footerSize: 30,
     });
   });
 
