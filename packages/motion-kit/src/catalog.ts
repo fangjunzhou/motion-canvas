@@ -276,5 +276,23 @@ export const catalog: CatalogDefinition = {
       example: 'examples/video-card.tsx',
       preview: true,
     },
+    {
+      name: 'flow',
+      title: 'Flow',
+      description:
+        'Sequences of cards with animated, optionally labeled connectors.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/Flow.ts',
+          target: 'src/components/motion/components/Flow.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['card'],
+      documentation: 'documentation/flow.md',
+      example: 'examples/flow.tsx',
+      preview: true,
+    },
   ],
 };
