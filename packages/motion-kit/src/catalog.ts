@@ -45,5 +45,23 @@ export const catalog: CatalogDefinition = {
       documentation: 'documentation/motion.md',
       example: 'examples/motion.ts',
     },
+    {
+      name: 'card',
+      title: 'Card',
+      description:
+        'Composable native cards with animated images, text, and footers.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/Card.ts',
+          target: 'src/components/motion/components/Card.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['theme'],
+      documentation: 'documentation/card.md',
+      example: 'examples/card.tsx',
+      preview: true,
+    },
   ],
 };
