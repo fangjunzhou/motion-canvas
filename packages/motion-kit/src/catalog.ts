@@ -223,6 +223,24 @@ export const catalog: CatalogDefinition = {
       preview: true,
     },
     {
+      name: 'table',
+      title: 'Table',
+      description:
+        'Composable themed rows and weighted cells with row and column reveals.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/Table.ts',
+          target: 'src/components/motion/components/Table.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['card', 'highlight'],
+      documentation: 'documentation/table.md',
+      example: 'examples/table.tsx',
+      preview: true,
+    },
+    {
       name: 'list',
       title: 'List',
       description:

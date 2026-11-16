@@ -7,6 +7,7 @@ import effects from './scenes/motion-kit-effects?scene';
 import highlight from './scenes/motion-kit-highlight?scene';
 import inkArrow from './scenes/motion-kit-ink-arrow?scene';
 import paperStack from './scenes/motion-kit-paper-stack?scene';
+import table from './scenes/motion-kit-table?scene';
 import themes from './scenes/motion-kit-themes?scene';
 import title from './scenes/motion-kit-title?scene';
 
@@ -17,6 +18,7 @@ export default makeProject({
     themes,
     composition,
     card,
+    table,
     highlight,
     inkArrow,
     effects,
