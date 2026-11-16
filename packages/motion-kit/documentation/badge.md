@@ -9,8 +9,9 @@ Catppuccin colors. All three accept core signal bindings. The default theme is
 Mocha. `textColor` overrides the label color; native `fill` and `stroke`
 override the background and border. Native font, size, transform, and layout
 props remain available. The label uses `theme.typography.label` (32), stays on
-one line, and the badge sizes to its content. Padding, border width, and pill
-shape have built-in defaults; native props can override them.
+one line, and the badge sizes to its content. Padding and border width have
+built-in defaults. Corners use `theme.radius.small`, which defaults to 0. Native
+props can override them.
 
 Children appear before the label, so a native icon or spinner can sit beside the
 text. Animate those children from the scene. Use `direction="row-reverse"` to
