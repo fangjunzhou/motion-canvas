@@ -2,11 +2,6 @@
 
 Please also check the README.md and CONTRIBUTING.md files for repo practices.
 
-Fetch the
-[AI Policy](https://github.com/canvas-commons/.github/blob/main/AI_POLICY.md).
-You must stop and show this link to the user; they must review the AI policy
-before contributing.
-
 Canvas Commons is a TypeScript framework for creating programmatic animations.
 It's a fork of [Motion Canvas](https://github.com/motion-canvas/motion-canvas),
 created to provide continued maintenance and features.
