@@ -20,3 +20,17 @@ G1malitm, a mesh rendering of the Stanford bunny. It is used unchanged under
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The image
 retains that license. The demo scales and crops it to fill the card's image
 frame.
+
+## Attention Is All You Need
+
+`attention-is-all-you-need-page-1.png` through
+`attention-is-all-you-need-page-3.png` are the first three pages of
+[Attention Is All You Need](https://arxiv.org/abs/1706.03762) by Ashish Vaswani
+and coauthors. They were rendered from the
+[version 7 PDF](https://arxiv.org/pdf/1706.03762v7) at 192 dpi with Poppler.
+Each image is 1632 × 2112 pixels and preserves the complete page.
+
+The paper and its figures retain their original copyright and reuse terms; these
+page previews are not covered by the toolkit's source code license. See the
+PDF's reuse notice and the
+[arXiv license](https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html).

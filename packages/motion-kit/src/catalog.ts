@@ -188,6 +188,23 @@ export const catalog: CatalogDefinition = {
       preview: true,
     },
     {
+      name: 'paper-stack',
+      title: 'Paper Stack',
+      description: 'Layer cards and images with an animated page focus window.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/PaperStack.ts',
+          target: 'src/components/motion/components/PaperStack.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['card'],
+      documentation: 'documentation/paper-stack.md',
+      example: 'examples/paper-stack.tsx',
+      preview: true,
+    },
+    {
       name: 'chart',
       title: 'Chart',
       description:
