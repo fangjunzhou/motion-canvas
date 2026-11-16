@@ -136,21 +136,43 @@ describe('local themes', () => {
     const first = createTheme({
       colors: {accent: '#f97316'},
       spacing: {medium: 40},
+      padding: {small: 12},
+      typography: {title: 36, caption: 18},
     });
     const second = createTheme({colors: {accent: '#a78bfa'}});
     expect(first.colors.accent).toBe('#f97316');
     expect(first.colors.surface).toBe(defaultTheme.colors.surface);
     expect(first.spacing.medium).toBe(40);
     expect(first.spacing.small).toBe(defaultTheme.spacing.small);
+    expect(first.padding.small).toBe(12);
+    expect(first.padding.medium).toBe(defaultTheme.padding.medium);
+    expect(first.typography.title).toBe(36);
+    expect(first.typography.caption).toBe(18);
+    expect(first.typography.body).toBe(defaultTheme.typography.body);
     expect(second.colors.accent).toBe('#a78bfa');
     expect(defaultTheme.colors.accent).toBe('#b4befe');
     expect(first.colors).not.toBe(second.colors);
     expect(first.typography).not.toBe(defaultTheme.typography);
+    expect(first.padding).not.toBe(defaultTheme.padding);
+    expect(second.padding).toEqual(defaultTheme.padding);
     for (const theme of [first, second, defaultTheme]) {
       expect(Object.isFrozen(theme)).toBe(true);
       expect(Object.values(theme).every(group => Object.isFrozen(group))).toBe(
         true,
       );
+    }
+  });
+
+  it('keeps padding independent from layout gaps across all flavors', () => {
+    for (const {flavor} of Palettes) {
+      const padded = createTheme({flavor, padding: {medium: 48}});
+      const spaced = createTheme({flavor, spacing: {medium: 24}});
+      expect(padded.spacing).toEqual(defaultTheme.spacing);
+      expect(spaced.padding).toEqual(defaultTheme.padding);
+      expect(catppuccinThemes[flavor].typography).toEqual(
+        defaultTheme.typography,
+      );
+      expect(catppuccinThemes[flavor].padding.medium).toBe(32);
     }
   });
 });

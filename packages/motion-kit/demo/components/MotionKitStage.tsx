@@ -1,9 +1,9 @@
 import {Layout, Txt, type LayoutProps} from '@canvas-commons/2d';
 import type {SignalValue} from '@canvas-commons/core';
-import {createTheme} from '../../registry/foundations/theme';
+import {defaultTheme} from '../../registry/foundations/theme';
 
 /** Shared typography and spacing for the demo scenes. */
-export const ShowcaseTheme = createTheme({typography: {body: 24}});
+export const ShowcaseTheme = defaultTheme;
 
 export interface MotionKitStageProps extends LayoutProps {
   heading: SignalValue<string>;
@@ -17,8 +17,8 @@ export interface MotionKitStageProps extends LayoutProps {
  * ```tsx
  * <MotionKitStage
  *   size={() => view.size()}
- *   heading="Four palettes. One toolkit."
- *   subtitle="Shared semantic tokens for every scene."
+ *   heading="Catppuccin palettes"
+ *   subtitle="Each theme has the same 26 named colors."
  * >
  *   <Rect grow={1} />
  * </MotionKitStage>
@@ -35,7 +35,7 @@ export class MotionKitStage extends Layout {
     super({
       layout: true,
       direction: 'column',
-      padding: theme.spacing.large,
+      padding: theme.padding.large,
       gap: theme.spacing.medium,
       fontFamily: theme.typography.fontFamily,
       ...props,

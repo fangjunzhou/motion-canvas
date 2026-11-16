@@ -2,7 +2,7 @@ import {Circle, Layout, Rect, Txt, makeScene2D} from '@canvas-commons/2d';
 import {all, createRef, waitFor} from '@canvas-commons/core';
 import {
   catppuccinPalettes,
-  createTheme,
+  catppuccinThemes,
   defaultTheme,
   type ThemeFlavor,
 } from '../registry/foundations/theme';
@@ -21,12 +21,12 @@ export default makeScene2D(function* (view) {
   const panelWidth = 720;
   const captionLineHeight = theme.typography.body * 1.25;
   const captionWidth =
-    panelWidth - theme.spacing.large * 2 - theme.spacing.small * 2;
+    panelWidth - theme.padding.large * 2 - theme.spacing.small * 2;
   const shortCaption = 'Shared tokens. Local customization.';
   const cards = Flavors.map(({flavor, label}) => ({
     label,
     palette: catppuccinPalettes[flavor],
-    theme: createTheme({flavor, typography: {heading: 32, body: 20}}),
+    theme: catppuccinThemes[flavor],
     ref: createRef<Rect>(),
   }));
 
@@ -37,7 +37,7 @@ export default makeScene2D(function* (view) {
       layout
       direction="column"
       width={panelWidth}
-      padding={theme.spacing.large}
+      padding={theme.padding.large}
       gap={theme.spacing.medium}
       radius={theme.radius.medium}
       fill={theme.colors.surface}
@@ -73,9 +73,9 @@ export default makeScene2D(function* (view) {
     </Rect>,
   );
   view.add(
-    <Layout layout direction="column" gap={24}>
+    <Layout layout direction="column" gap={theme.spacing.medium}>
       {[cards.slice(0, 2), cards.slice(2)].map(row => (
-        <Layout layout gap={24}>
+        <Layout layout gap={theme.spacing.medium}>
           {row.map(({label, theme, palette, ref}) => (
             <Rect
               ref={ref}
@@ -83,8 +83,8 @@ export default makeScene2D(function* (view) {
               direction="column"
               width={400}
               height={196}
-              padding={24}
-              gap={12}
+              padding={theme.padding.medium}
+              gap={theme.spacing.small}
               radius={theme.radius.medium}
               fill={theme.colors.surface}
               stroke={theme.colors.border}
@@ -95,7 +95,7 @@ export default makeScene2D(function* (view) {
               <Layout alignItems="center" justifyContent="space-between">
                 <Txt
                   text={label}
-                  fontSize={theme.typography.heading}
+                  fontSize={theme.typography.title}
                   fill={theme.colors.foreground}
                 />
                 <Rect

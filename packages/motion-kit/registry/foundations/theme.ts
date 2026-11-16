@@ -51,8 +51,16 @@ export interface MotionTheme {
   >;
   readonly typography: Readonly<{
     fontFamily: string;
-    body: number;
     heading: number;
+    title: number;
+    body: number;
+    label: number;
+    caption: number;
+  }>;
+  readonly padding: Readonly<{
+    small: number;
+    medium: number;
+    large: number;
   }>;
   readonly spacing: Readonly<{
     small: number;
@@ -82,7 +90,15 @@ export type ThemeOverrides = {
 } & {readonly flavor?: ThemeFlavor};
 
 const SharedTokens = Object.freeze({
-  typography: Object.freeze({fontFamily: 'sans-serif', body: 32, heading: 48}),
+  typography: Object.freeze({
+    fontFamily: 'sans-serif',
+    heading: 48,
+    title: 32,
+    body: 24,
+    label: 22,
+    caption: 20,
+  }),
+  padding: Object.freeze({small: 16, medium: 32, large: 64}),
   spacing: Object.freeze({small: 16, medium: 32, large: 64}),
   radius: Object.freeze({small: 12, medium: 24}),
   motion: Object.freeze({
@@ -278,6 +294,7 @@ export function createTheme(overrides: ThemeOverrides = {}): MotionTheme {
       ...base.typography,
       ...overrides.typography,
     }),
+    padding: Object.freeze({...base.padding, ...overrides.padding}),
     spacing: Object.freeze({...base.spacing, ...overrides.spacing}),
     radius: Object.freeze({...base.radius, ...overrides.radius}),
     motion: Object.freeze({...base.motion, ...overrides.motion}),

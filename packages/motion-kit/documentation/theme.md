@@ -60,22 +60,39 @@ yield * caption().text(nextCaption, theme.motion.long, theme.motion.emphasize);
 | Group        | Tokens                                                             |
 | ------------ | ------------------------------------------------------------------ |
 | `colors`     | `background`, `surface`, `foreground`, `muted`, `accent`, `border` |
-| `typography` | `fontFamily`, `body`, `heading`                                    |
+| `typography` | `fontFamily`, `heading`, `title`, `body`, `label`, `caption`       |
+| `padding`    | `small`, `medium`, `large`                                         |
 | `spacing`    | `small`, `medium`, `large`                                         |
 | `radius`     | `small`, `medium`                                                  |
 | `motion`     | `short`, `medium`, `long`, `enter`, `exit`, `emphasize`            |
 
-Spacing, font sizes, and radii use canvas units. Motion durations use seconds.
-The easing tokens are core `TimingFunction` values. The default font uses the
-system's sans-serif face; load a specific font in a consuming project when its
-renders need identical typography across machines.
+Typography roles default to 48 for scene headings, 32 for titles, 24 for body
+text, 22 for labels, and 20 for captions. Card titles, content, and footers use
+`title`, `body`, and `caption`; Badge uses `label`.
+
+Padding sets the inset inside a container. Spacing sets the gap between
+elements. Both scales default to 16, 32, and 64 for `small`, `medium`, and
+`large`. Changing a gap does not change card padding:
+
+```ts
+const theme = createTheme({
+  padding: {medium: 40},
+  spacing: {medium: 24},
+  typography: {title: 36},
+});
+```
+
+Padding, spacing, font sizes, and radii use canvas units. Motion durations use
+seconds. The easing tokens are core `TimingFunction` values. The default font
+uses the system's sans-serif face; load a specific font in a consuming project
+when its renders need identical typography across machines.
 
 ## Props and signals
 
-Themes are plain immutable values. A future component can accept a theme as
-constructor configuration, then expose signals for the individual properties
-callers need to animate. Its child nodes should read those signals through
-callbacks instead of capturing their construction-time values.
+Themes are plain immutable values. Card, Badge, and Progress accept a reactive
+`theme` prop. Replacing the theme updates their defaults without rebuilding the
+nodes. Explicit native props override the corresponding defaults. Card parts
+follow their nearest ancestor card's theme.
 
 ## Animation methods
 
