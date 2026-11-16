@@ -129,6 +129,7 @@ describe('local themes', () => {
   it('defaults existing factory calls to Mocha', () => {
     expect(defaultTheme).toBe(catppuccinThemes.mocha);
     expect(createTheme().colors).toEqual(catppuccinThemes.mocha.colors);
+    expect(createTheme().radius).toEqual({small: 0, medium: 0});
     expect(Object.isFrozen(catppuccinThemes)).toBe(true);
   });
 

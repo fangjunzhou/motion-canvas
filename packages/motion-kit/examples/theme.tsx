@@ -101,7 +101,7 @@ export default makeScene2D(function* (view) {
                 <Rect
                   width={48}
                   height={6}
-                  radius={3}
+                  radius={theme.radius.small}
                   fill={theme.colors.accent}
                 />
               </Layout>

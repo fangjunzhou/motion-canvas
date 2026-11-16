@@ -104,7 +104,7 @@ const SharedTokens = Object.freeze({
   }),
   padding: Object.freeze({small: 16, medium: 32, large: 64}),
   spacing: Object.freeze({small: 16, medium: 32, large: 64}),
-  radius: Object.freeze({small: 12, medium: 24}),
+  radius: Object.freeze({small: 0, medium: 0}),
   motion: Object.freeze({
     short: 0.2,
     medium: 0.4,

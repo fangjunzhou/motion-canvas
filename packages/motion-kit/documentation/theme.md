@@ -85,6 +85,9 @@ const theme = createTheme({
 });
 ```
 
+Both radius tokens default to 0. Set `radius.small` for small surfaces, or
+`radius.medium` for cards. Native radius props override the theme.
+
 Padding, spacing, font sizes, and radii use canvas units. Motion durations use
 seconds. The easing tokens are core `TimingFunction` values. The default font
 uses the system's sans-serif face; load a specific font in a consuming project

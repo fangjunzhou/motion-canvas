@@ -16,9 +16,11 @@ import {ContentSlide} from '../../registry/components/Slide';
 import {
   catppuccinPalettes,
   catppuccinThemes,
-  defaultTheme,
+  createTheme,
   type ThemeFlavor,
 } from '../../registry/foundations/theme';
+import {fitSlide} from '../layout';
+import {demoTheme} from '../theme';
 
 const Flavors = [
   {flavor: 'latte', label: 'Latte'},
@@ -31,10 +33,10 @@ const Flavors = [
 }[];
 
 export default makeScene2D(function* (view) {
-  const theme = defaultTheme;
+  const theme = demoTheme;
   const cards = Flavors.map(({flavor, label}) => ({
     label,
-    theme: catppuccinThemes[flavor],
+    theme: createTheme({...theme, colors: catppuccinThemes[flavor].colors}),
     palette: catppuccinPalettes[flavor],
     ref: createRef<Card>(),
     swatches: createRefArray<Rect>(),
@@ -46,8 +48,9 @@ export default makeScene2D(function* (view) {
   view.add(
     <ContentSlide
       ref={stage}
+      theme={theme}
       opacity={0}
-      size={() => view.size()}
+      {...fitSlide(view)}
       title="Catppuccin Palettes"
       subtitle="Each palette has 14 accent colors and 12 neutral colors."
     >
