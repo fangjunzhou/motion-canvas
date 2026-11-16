@@ -22,7 +22,7 @@ export interface ProgressProps extends RectProps {
 }
 
 /**
- * A rounded progress track. Value uses the range from min to max, normally 0 to 100.
+ * A progress track. Value uses the range from min to max, normally 0 to 100.
  * Animate the value signal from the calling scene; construction starts no threads.
  *
  * @example
@@ -52,7 +52,7 @@ export class Progress extends Rect {
   declare public readonly indicatorFill: CanvasStyleSignal<this>;
 
   public constructor(props: ProgressProps = {}) {
-    super({height: 16, radius: 999, ...props});
+    super({height: 16, ...props});
   }
 
   /**

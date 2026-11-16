@@ -12,8 +12,8 @@ zero to one. Non-finite values and invalid bounds produce an empty track.
 Use `fill` for the track and `indicatorFill` for the indicator. Both accept
 native canvas styles. `theme` supplies the default background and accent colors.
 Native dimensions, transforms, radius, and layout props remain available. The
-track defaults to 16 scene units high with rounded ends. `textDirection="rtl"`
-fills from the right.
+track defaults to 16 scene units high with square ends. Its radius defaults
+to 0. `textDirection="rtl"` fills from the right.
 
 Place a native `Txt` label and value display above the track in a `Layout`, as
 in the example. Native children render above the indicator, so a marker can
