@@ -167,9 +167,4 @@ export default makeScene2D(function* (view) {
     ),
   );
   yield* waitFor(2);
-  yield* all(
-    ...cards.map(({ref, theme}) =>
-      ref().opacity(0, theme.motion.medium, theme.motion.exit),
-    ),
-  );
 });

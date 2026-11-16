@@ -38,3 +38,12 @@ holds the current progress. `bounds()` returns the full mapped region regardless
 of progress. Invalid coordinate sizes produce an empty region.
 
 Use the existing `Highlight` component for a marker that follows text wrapping.
+
+## Paper preview
+
+The example annotates page 1 of _Attention Is All You Need_ by Vaswani et al.
+(2017), using the page's original 612 by 792 point coordinates. It marks the
+title, then the abstract, and keeps the region aligned while the page zooms. The
+page is embedded locally as a lossless WebP, so no external image request is
+needed. The source is the [version 7 paper](https://arxiv.org/pdf/1706.03762v7);
+the page retains its original copyright and reuse terms.

@@ -419,7 +419,12 @@ function* transform(
           fontWeight: source.fontWeight(),
           lineHeight: source.lineHeight(),
           textAlign: source.textAlign(),
-          textWrap: source.textWrap(),
+          textWrap:
+            source.lineCount() <= 1 &&
+            target instanceof Txt &&
+            target.lineCount() <= 1
+              ? false
+              : source.textWrap(),
         })
       : new Rect({
           layoutSelf: false,

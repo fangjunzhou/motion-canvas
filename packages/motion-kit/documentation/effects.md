@@ -43,7 +43,8 @@ color. The block follows both nodes' world transforms and corner radii.
 dimensions, color, and world transform. At completion the source is hidden and
 the target is visible. Both transforms place their temporary node above the
 source and target in their closest shared parent. An explicit `layer` overrides
-that placement.
+that placement. When both labels occupy one line, the moving text stays on one
+line throughout the transform instead of wrapping at an intermediate width.
 
 Wipes and transforms remove their overlays in `finally`. Cancelling an effect
 restores the original visibility bindings; cancelling a push also restores its

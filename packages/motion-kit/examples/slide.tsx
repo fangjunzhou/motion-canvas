@@ -50,12 +50,14 @@ export default makeScene2D(function* (view) {
     }),
   ];
   view.fill(theme.colors.background);
-  for (const slide of slides) {
+  for (const [index, slide] of slides.entries()) {
     slide.opacity(0);
     view.add(slide);
     yield* slide.swipeIn();
     yield* waitFor(1.6);
-    yield* slide.swipeOut();
-    slide.remove();
+    if (index < slides.length - 1) {
+      yield* slide.swipeOut();
+      slide.remove();
+    }
   }
 });

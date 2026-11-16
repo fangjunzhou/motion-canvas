@@ -180,6 +180,10 @@ export const catalog: CatalogDefinition = {
           path: 'registry/components/RegionHighlight.ts',
           target: 'src/components/motion/components/RegionHighlight.ts',
         },
+        {
+          path: 'registry/assets/transformer-paper.ts',
+          target: 'src/components/motion/assets/transformer-paper.ts',
+        },
       ],
       dependencies: ['@canvas-commons/2d@^0.4.0'],
       requires: ['theme'],
