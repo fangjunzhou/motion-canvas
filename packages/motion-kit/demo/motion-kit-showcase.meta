@@ -13,12 +13,12 @@
     "audioOffset": 0
   },
   "preview": {
-    "fps": 60,
-    "resolutionScale": 1
+    "fps": 30,
+    "resolutionScale": 2
   },
   "rendering": {
     "fps": 60,
-    "resolutionScale": 1,
+    "resolutionScale": 2,
     "colorSpace": "srgb",
     "exporter": {
       "name": "@canvas-commons/core/image-sequence",

@@ -1,8 +1,16 @@
 import {Layout, Rect, Txt, makeScene2D} from '@canvas-commons/2d';
-import {createRef, sequence, waitFor} from '@canvas-commons/core';
+import {createRef, waitFor} from '@canvas-commons/core';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../../registry/components/Card';
 import {
   catppuccinPalettes,
-  createTheme,
+  catppuccinThemes,
   type ThemeFlavor,
 } from '../../registry/foundations/theme';
 import {MotionKitStage, ShowcaseTheme} from '../components/MotionKitStage';
@@ -19,13 +27,13 @@ const Flavors = [
 
 export default makeScene2D(function* (view) {
   const theme = ShowcaseTheme;
-  const stage = createRef<MotionKitStage>();
-  const cards = Flavors.map(flavor => ({
-    ...flavor,
-    theme: createTheme({flavor: flavor.flavor, typography: theme.typography}),
-    palette: catppuccinPalettes[flavor.flavor],
-    ref: createRef<Rect>(),
+  const cards = Flavors.map(({flavor, label}) => ({
+    label,
+    theme: catppuccinThemes[flavor],
+    palette: catppuccinPalettes[flavor],
   }));
+
+  const stage = createRef<MotionKitStage>();
 
   view.fill(theme.colors.background);
   view.add(
@@ -33,8 +41,8 @@ export default makeScene2D(function* (view) {
       ref={stage}
       opacity={0}
       size={() => view.size()}
-      heading="Built-in Motion Kit themes"
-      subtitle="Catppuccin color palettes"
+      heading="Catppuccin palettes"
+      subtitle="All four themes use the same 26 color names."
     >
       <Layout
         grow={1}
@@ -42,29 +50,17 @@ export default makeScene2D(function* (view) {
         gap={theme.spacing.medium}
         alignContent="stretch"
       >
-        {cards.map(({label, theme: preset, palette, ref}) => (
-          <Rect
-            ref={ref}
-            layout
-            direction="column"
-            grow={1}
-            basis="40%"
-            minWidth={0}
-            justifyContent="space-between"
-            padding={preset.spacing.medium}
-            gap={preset.spacing.small}
-            radius={preset.radius.medium}
-            fill={preset.colors.background}
-            stroke={preset.colors.border}
-            lineWidth={3}
-          >
-            <Txt
-              text={label}
-              fontSize={preset.typography.heading}
-              fontWeight={600}
-              fill={preset.colors.foreground}
-            />
-            <Layout direction="column" gap={preset.spacing.small}>
+        {cards.map(({label, theme: preset, palette}) => (
+          <Card theme={preset} grow={1} basis="40%" minWidth={0}>
+            <CardHeader>
+              <CardTitle text={label} />
+              <CardDescription text={`Background ${palette.base}`} />
+            </CardHeader>
+            <CardContent
+              grow={1}
+              justifyContent="center"
+              gap={preset.spacing.small}
+            >
               {[
                 Object.values(palette).slice(0, 14),
                 Object.values(palette).slice(14),
@@ -83,31 +79,20 @@ export default makeScene2D(function* (view) {
                   ))}
                 </Layout>
               ))}
-            </Layout>
-          </Rect>
+            </CardContent>
+            <CardFooter>
+              <Txt
+                text="14 accent colors and 12 neutral colors"
+                fill={preset.colors.muted}
+              />
+            </CardFooter>
+          </Card>
         ))}
       </Layout>
     </MotionKitStage>,
   );
 
   yield* stage().opacity(1, theme.motion.medium, theme.motion.enter);
-  yield* waitFor(1);
-  yield* sequence(
-    0.3,
-    ...cards.map(function* ({ref, theme: preset}) {
-      yield* ref().stroke(
-        preset.colors.accent,
-        preset.motion.medium,
-        preset.motion.emphasize,
-      );
-      yield* waitFor(0.8);
-      yield* ref().stroke(
-        preset.colors.border,
-        preset.motion.medium,
-        preset.motion.emphasize,
-      );
-    }),
-  );
-  yield* waitFor(4);
+  yield* waitFor(5);
   yield* stage().opacity(0, theme.motion.medium, theme.motion.exit);
 });

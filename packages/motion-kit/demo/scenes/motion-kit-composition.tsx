@@ -1,4 +1,4 @@
-import {Circle, Layout, Line, makeScene2D, Rect, Txt} from '@canvas-commons/2d';
+import {Layout, Line, makeScene2D, Txt} from '@canvas-commons/2d';
 import {
   all,
   createRef,
@@ -7,10 +7,33 @@ import {
   waitFor,
   type ThreadGenerator,
 } from '@canvas-commons/core';
+import {Badge} from '../../registry/components/Badge';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../../registry/components/Card';
+import {Progress} from '../../registry/components/Progress';
 import type {MotionMethods} from '../../registry/motion/contracts';
 import {MotionKitStage, ShowcaseTheme} from '../components/MotionKitStage';
 
-const Steps = ['enter', 'emphasize', 'exit'];
+const Steps = [
+  {
+    name: 'enter',
+    explanation: 'Fade the panel in as it grows to full size.',
+  },
+  {
+    name: 'emphasize',
+    explanation: 'Briefly enlarge the panel and brighten its border.',
+  },
+  {
+    name: 'exit',
+    explanation: 'Fade the panel out as it shrinks to 94% of its size.',
+  },
+];
 
 const CurvePoints = [
   [0, 0.8],
@@ -25,12 +48,12 @@ const CurvePoints = [
 export default makeScene2D(function* (view) {
   const theme = ShowcaseTheme;
   const stage = createRef<MotionKitStage>();
-  const panel = createRef<Rect>();
-  const track = createRef<Rect>();
+  const panel = createRef<Card>();
   const chart = createRef<Layout>();
   const progress = createSignal(0);
   const phase = createSignal('enter');
-  const status = createSignal('Ready');
+  const status = createRef<Badge>();
+  const badges = Steps.map(step => ({...step, ref: createRef<Badge>()}));
 
   const motion = {
     *enter(
@@ -73,97 +96,69 @@ export default makeScene2D(function* (view) {
       opacity={0}
       size={() => view.size()}
       heading="Scene composition and animation"
-      subtitle="The percentage, bar, and curve share one progress signal."
+      subtitle="Watch one signal update the label, bar, and curve together."
     >
       <Layout grow={1} gap={theme.spacing.medium}>
-        <Rect
+        <Card
           ref={panel}
-          layout
-          direction="column"
+          theme={theme}
           grow={2}
           basis={0}
           minWidth={0}
-          padding={theme.spacing.medium}
-          gap={theme.spacing.medium}
-          radius={theme.radius.medium}
-          fill={theme.colors.surface}
-          stroke={theme.colors.border}
-          lineWidth={3}
           opacity={0}
           scale={0.94}
         >
-          <Rect
-            layout
-            alignSelf="start"
-            alignItems="center"
-            padding={[theme.spacing.small / 2, theme.spacing.small]}
-            gap={theme.spacing.small / 2}
-            radius={theme.radius.small}
-            fill={theme.colors.background}
-          >
-            <Txt
-              text={status}
-              fontSize={theme.typography.body * 0.75}
-              fill={theme.colors.accent}
-            />
-          </Rect>
-          <Layout direction="column" gap={theme.spacing.small}>
-            <Layout justifyContent="space-between">
-              <Txt
-                text="Animation progress"
-                fontSize={theme.typography.body}
-                fill={theme.colors.muted}
-              />
-              <Txt
-                text={() => `${Math.round(progress() * 100)}%`}
-                fontSize={theme.typography.body}
-                fill={theme.colors.foreground}
+          <CardHeader>
+            <CardTitle text="Shared progress" />
+            <CardDescription text="The bar's width and the visible curve follow the same progress value." />
+          </CardHeader>
+          <CardContent grow={1} minHeight={0} gap={theme.spacing.medium}>
+            <Layout ref={chart} grow={1} basis={0} minHeight={0}>
+              <Line
+                layout={false}
+                opacity={() => (progress() > 0 ? 1 : 0)}
+                points={() =>
+                  CurvePoints.map(
+                    ([x, y]) =>
+                      new Vector2(
+                        chart().width() * (x - 0.5),
+                        chart().height() * (y - 0.5),
+                      ),
+                  )
+                }
+                end={progress}
+                radius={theme.radius.medium}
+                stroke={theme.colors.accent}
+                lineWidth={theme.spacing.small / 4}
+                lineCap="round"
               />
             </Layout>
-            <Rect
-              ref={track}
-              height={theme.spacing.small}
-              radius={theme.radius.small}
-              fill={theme.colors.background}
-            >
-              <Rect
-                layout={false}
-                width={() => track().width() * progress()}
-                x={() => (track().width() * (progress() - 1)) / 2}
-                height={() => track().height()}
-                radius={theme.radius.small}
-                fill={theme.colors.accent}
-              />
-              <Circle
-                layout={false}
-                x={() => track().width() * (progress() - 0.5)}
-                size={theme.spacing.medium}
-                fill={theme.colors.foreground}
-                stroke={theme.colors.surface}
-                lineWidth={theme.spacing.small / 4}
-              />
-            </Rect>
-          </Layout>
-          <Layout ref={chart} grow={1} basis={0} minHeight={0}>
-            <Line
-              layout={false}
-              points={() =>
-                CurvePoints.map(
-                  ([x, y]) =>
-                    new Vector2(
-                      chart().width() * (x - 0.5),
-                      chart().height() * (y - 0.5),
-                    ),
-                )
-              }
-              end={progress}
-              radius={theme.radius.medium}
-              stroke={theme.colors.accent}
-              lineWidth={theme.spacing.small / 4}
-              lineCap="round"
+            <Layout direction="column" gap={theme.spacing.small} shrink={0}>
+              <Layout justifyContent="space-between">
+                <Txt text="Animation progress" fill={theme.colors.muted} />
+                <Txt
+                  text={() => `${Math.round(progress() * 100)}%`}
+                  fill={theme.colors.foreground}
+                />
+              </Layout>
+              <Progress value={() => progress() * 100} theme={theme} />
+            </Layout>
+          </CardContent>
+          <CardFooter justifyContent="space-between" gap={theme.spacing.medium}>
+            <Badge
+              ref={status}
+              text="Ready"
+              opacity={0}
+              theme={theme}
+              variant="secondary"
+              alignSelf="center"
             />
-          </Layout>
-        </Rect>
+            <Txt
+              text="The scene controls when these animations run."
+              fill={theme.colors.muted}
+            />
+          </CardFooter>
+        </Card>
         <Layout
           direction="column"
           grow={1}
@@ -171,27 +166,32 @@ export default makeScene2D(function* (view) {
           minWidth={0}
           gap={theme.spacing.medium}
         >
-          {Steps.map(name => (
-            <Rect
-              layout
+          {badges.map(({name, explanation, ref}) => (
+            <Card
+              theme={theme}
               grow={1}
               basis={0}
-              justifyContent="center"
-              alignItems="center"
-              padding={theme.spacing.medium}
-              radius={theme.radius.medium}
-              fill={theme.colors.surface}
+              minHeight={0}
               stroke={() =>
                 phase() === name ? theme.colors.accent : theme.colors.border
               }
-              lineWidth={2}
             >
-              <Txt
-                text={`${name}()`}
-                fontSize={theme.typography.body}
-                fill={theme.colors.foreground}
-              />
-            </Rect>
+              <CardHeader>
+                <Badge
+                  ref={ref}
+                  text={`${name}()`}
+                  theme={theme}
+                  variant={() => (phase() === name ? 'default' : 'outline')}
+                />
+              </CardHeader>
+              <CardContent grow={1}>
+                <Txt
+                  text={explanation}
+                  textWrap
+                  fill={theme.colors.foreground}
+                />
+              </CardContent>
+            </Card>
           ))}
         </Layout>
       </Layout>
@@ -201,21 +201,25 @@ export default makeScene2D(function* (view) {
   yield* all(
     stage().opacity(1, theme.motion.medium, theme.motion.enter),
     motion.enter(0.6),
+    status().enter(),
   );
   yield* waitFor(0.6);
-  status('Animating');
+  yield* status().changeText('Animating');
   yield* progress(1, 2.4, theme.motion.emphasize);
-  status('Complete');
+  yield* status().changeText({text: 'Complete', variant: 'default'});
   phase('emphasize');
+  yield* badges[1].ref().emphasize();
   yield* motion.emphasize();
   yield* waitFor(1);
-  status('Updated locally');
+  yield* status().changeText({text: 'Progress adjusted', variant: 'secondary'});
   yield* progress(0.68, 1.2, theme.motion.emphasize);
   yield* waitFor(2);
   phase('exit');
+  yield* badges[2].ref().emphasize();
   yield* motion.exit(0.6);
   yield* waitFor(0.6);
   phase('enter');
+  yield* badges[0].ref().emphasize();
   yield* motion.enter(0.6);
   yield* waitFor(3);
   yield* stage().opacity(0, theme.motion.medium, theme.motion.exit);

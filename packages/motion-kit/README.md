@@ -2,8 +2,9 @@
 
 A private source catalog for personal Canvas Commons animations. The initial
 toolkit establishes foundations, a motion contract, registry generation, and
-documentation. Components and blocks are intentionally added later, when real
-animations establish their requirements.
+documentation. The component catalog includes Card, Badge, and Progress. Further
+components and blocks are added when real animations establish their
+requirements.
 
 ## Working locally
 
@@ -23,15 +24,23 @@ The gallery lives at `/motion-kit` on the documentation server. `docs:dev` and
 documentation examples still use the repository's `pnpm examples:build` command.
 
 The **Motion Kit Showcase** is the first project under **Try the editor** at
-`/editor/`, with a direct route at `/editor/motion-kit-showcase/`. Its two
-scenes cover the current catalog: all four Catppuccin themes, reactive
-composition with native nodes, and the optional `enter`, `emphasize`, and `exit`
-motion contract. The project lives in
-`packages/motion-kit/demo/motion-kit-showcase.ts` and imports the canonical
-registry source directly. Run `pnpm motion-kit:dev` to open its own editor
-locally. `pnpm motion-kit:demo:build` bundles the demo into `dist/static/demos`;
-the docs development and build commands run this automatically after generating
-the registry. The demo scenes and shared presentation layout live under `demo/`.
+`/editor/`, with a direct route at `/editor/motion-kit-showcase/`. Its three
+scenes use Cards to present the four Catppuccin palettes, demonstrate shared
+signals and scene timing, and explain two animation principles. The project
+lives in `packages/motion-kit/demo/motion-kit-showcase.ts` and imports the
+canonical registry source directly. Run `pnpm motion-kit:dev` to open its own
+editor locally. `pnpm motion-kit:demo:build` bundles the demo into
+`dist/static/demos`; the docs development and build commands run this
+automatically after generating the registry. The demo scenes and shared
+presentation layout live under `demo/`.
+
+The Card scene demonstrates the composable `CardHeader`, `CardTitle`,
+`CardDescription`, `CardContent`, and `CardFooter` nodes. It reveals the text in
+order, shows and hides the footer, then resizes before replacing the content. It
+also shows and hides a Cornell box cover, then changes it to a square Stanford
+bunny image. Image credits and licenses are in `demo/assets/README.md`. Copy the
+`card` registry item with its `theme` dependency to use these parts in your own
+scenes.
 
 ## Layers
 
@@ -68,6 +77,11 @@ const theme = createTheme({flavor: 'latte', spacing: {medium: 40}});
 `catppuccinThemes.latte`, `.frappe`, `.macchiato`, and `.mocha` expose the
 frozen presets directly. `createTheme()` and existing override-only calls use
 Mocha.
+
+Typography roles cover scene headings, titles, body text, labels, and captions.
+The `padding` scale controls container insets; `spacing` controls layout gaps.
+Both offer `small`, `medium`, and `large` sizes. Components use these defaults,
+so scenes only need styling props when they differ from the theme.
 
 ## Source ownership
 
@@ -121,7 +135,7 @@ playground, while keeping the Canvas Commons runtime external. Gallery previews
 support replay and scrubbing, and their source remains available in the usage
 section.
 
-## Adding a component later
+## Adding a component
 
 1. Implement it under `registry/components`, extending the nearest native node.
 2. Preserve inherited layout props and bind reactive child properties to
