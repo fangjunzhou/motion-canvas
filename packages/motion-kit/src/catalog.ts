@@ -117,5 +117,22 @@ export const catalog: CatalogDefinition = {
       example: 'examples/slide.tsx',
       preview: true,
     },
+    {
+      name: 'highlight',
+      title: 'Text Highlight',
+      description: 'A seeded marker that draws behind selected, wrapping text.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/Highlight.ts',
+          target: 'src/components/motion/components/Highlight.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['theme'],
+      documentation: 'documentation/highlight.md',
+      example: 'examples/highlight.tsx',
+      preview: true,
+    },
   ],
 };
