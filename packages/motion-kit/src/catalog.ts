@@ -134,5 +134,23 @@ export const catalog: CatalogDefinition = {
       example: 'examples/highlight.tsx',
       preview: true,
     },
+    {
+      name: 'ink-arrow',
+      title: 'Ink Arrow',
+      description:
+        'A seeded, tapered arrow with stop-motion shaft and head reveals.',
+      layer: 'components',
+      files: [
+        {
+          path: 'registry/components/InkArrow.ts',
+          target: 'src/components/motion/components/InkArrow.ts',
+        },
+      ],
+      dependencies: ['@canvas-commons/2d@^0.4.0'],
+      requires: ['theme'],
+      documentation: 'documentation/ink-arrow.md',
+      example: 'examples/ink-arrow.tsx',
+      preview: true,
+    },
   ],
 };

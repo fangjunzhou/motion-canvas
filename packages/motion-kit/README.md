@@ -2,9 +2,9 @@
 
 A private source catalog for personal Canvas Commons animations. The initial
 toolkit establishes foundations, a motion contract, registry generation, and
-documentation. The component catalog includes Card, Badge, Progress, and
-presentation slides. Further components and blocks are added when real
-animations establish their requirements.
+documentation. The component catalog includes Card, Badge, Progress, Highlight,
+Ink Arrow, and presentation slides. Further components and blocks are added when
+real animations establish their requirements.
 
 ## Working locally
 
@@ -25,9 +25,10 @@ documentation examples still use the repository's `pnpm examples:build` command.
 
 The **Motion Kit Showcase** is the first project under **Try the editor** at
 `/editor/`, with a direct route at `/editor/motion-kit-showcase/`. An opening
-title slide introduces the demo. The following three scenes use Cards to present
-the four Catppuccin palettes, demonstrate shared signals and scene timing, and
-explain two animation principles. The project lives in
+title slide introduces the demo. The following scenes use Cards to present the
+four Catppuccin palettes, demonstrate shared signals and scene timing, explain
+two animation principles, draw marker highlights behind text, and trace a
+tapered ink arrow. The project lives in
 `packages/motion-kit/demo/motion-kit-showcase.ts` and imports the canonical
 registry source directly. Run `pnpm motion-kit:dev` to open its own editor
 locally. `pnpm motion-kit:demo:build` bundles the demo into `dist/static/demos`;
