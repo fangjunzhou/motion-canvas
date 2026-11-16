@@ -1,10 +1,10 @@
 # Motion Kit
 
-A private source catalog for personal Canvas Commons animations. The initial
-toolkit establishes foundations, a motion contract, registry generation, and
-documentation. The component catalog includes Card, Badge, Progress, Highlight,
-Ink Arrow, and presentation slides. Further components and blocks are added when
-real animations establish their requirements.
+A private source catalog for personal Canvas Commons animations. Copy native
+components and scene effects into your project, then edit them locally. The
+catalog includes Card, Badge, Progress, Highlight, Ink Arrow, Region Highlight,
+Paper Stack, Chart, and presentation slides. Shared motion helpers cover pushes,
+flicker, color wipes, and shape and text transforms.
 
 ## Working locally
 
@@ -18,30 +18,42 @@ pnpm --filter @canvas-commons/motion-kit run typecheck
 pnpm docs:dev
 ```
 
-The gallery lives at `/motion-kit` on the documentation server. `docs:dev` and
-`docs:build` generate the catalog first. Build the runtime packages with
-`pnpm build` before starting either command in a fresh checkout. The other
-documentation examples still use the repository's `pnpm examples:build` command.
+The gallery lives at `/motion-kit` on the documentation server. Previews use a
+1920 × 1080 scene canvas, matching the theme and presentation slides, and scale
+to the available page width. `docs:dev` and `docs:build` generate the catalog
+first. Build the runtime packages with `pnpm build` before starting either
+command in a fresh checkout. The other documentation examples still use the
+repository's `pnpm examples:build` command.
 
 The **Motion Kit Showcase** is the first project under **Try the editor** at
 `/editor/`, with a direct route at `/editor/motion-kit-showcase/`. An opening
 title slide introduces the demo. The following scenes use Cards to present the
 four Catppuccin palettes, demonstrate shared signals and scene timing, explain
 two animation principles, draw marker highlights behind text, and trace a
-tapered ink arrow. The project lives in
+tapered ink arrow. The final scenes combine wipes and transforms, focus pages
+from _Attention Is All You Need_ in a paper stack, mark a passage, and plot an
+animation curve. The project lives in
 `packages/motion-kit/demo/motion-kit-showcase.ts` and imports the canonical
 registry source directly. Run `pnpm motion-kit:dev` to open its own editor
 locally. `pnpm motion-kit:demo:build` bundles the demo into `dist/static/demos`;
 the docs development and build commands run this automatically after generating
 the registry. The demo scenes live under `demo/`; their shared presentation
-frame is the registry's `ContentSlide` component.
+frame is the registry's `ContentSlide` component. `demo/layout.ts` fits that
+presentation canvas into the preview. Scene content uses flex layouts, and arrow
+endpoints and plot frames follow the available layout bounds.
+
+`demo/theme.ts` defines the showcase theme. Edit its `createTheme` options to
+change colors, typography, padding, spacing, radii, or motion defaults across
+the scenes. It starts with Mocha and adds a local `colors.highlight` token for
+the translucent text marker. Palette cards keep their own Catppuccin colors and
+use the demo's other theme settings.
 
 The Card scene demonstrates the composable `CardHeader`, `CardTitle`,
 `CardDescription`, `CardContent`, and `CardFooter` nodes. It reveals the text in
 order, shows and hides the footer, then resizes before replacing the content. It
 also shows and hides a Cornell box cover, then changes it to a square Stanford
 bunny image. Image credits and licenses are in `demo/assets/README.md`. Copy the
-`card` registry item with its `theme` dependency to use these parts in your own
+`card` registry item with its dependencies to use these parts in your own
 scenes.
 
 The `slide` registry item includes `TitleSlide`, `ContentSlide`, `SectionSlide`,
@@ -170,3 +182,28 @@ independent instances, layout composition, reset/replay/seeking, cloning when
 supported, and agreement between the preview and documentation. Runtime
 components and distribution changes still follow the repository's contribution
 and changeset rules if they later become public.
+
+## Depth Canvas migration
+
+The effects and components from `depth-buffer-video/projects/depth-canvas` use
+local theme props and scene-scheduled generators here. The source was reviewed
+at commit `87d1b42`.
+
+| Depth Canvas                     | Motion Kit                                                                |
+| -------------------------------- | ------------------------------------------------------------------------- |
+| `pushIn`, `pushOut`              | `effects`: native movement and opacity with resting bindings preserved    |
+| `flashIn`, `flashOut`            | `effects`: seeded, repeatable flicker                                     |
+| `colorSwipe`                     | `effects`: temporary wipe overlay with optional visibility swap           |
+| `rectTransform`, `textTransform` | `effects`: world-space proxy morphs                                       |
+| Coordinate `highlight` effect    | `RegionHighlight` with source coordinates and reveal/erase                |
+| Card / `colorSwipeShow`          | Existing Card parts / `Card.swipeIn()`                                    |
+| Title / `pushTitle`              | Existing title and content slides / `Slide.enter()`                       |
+| PaperStack                       | `PaperStack` and composable `PaperStackItem` card pages                   |
+| Axis / PlotLine                  | `Chart`, `ChartAxis`, and `ChartLine`                                     |
+| Typography                       | Native `Txt` with theme typography and color tokens                       |
+| MaskedImg                        | Existing `CardImage` or native `Rect clip` and `Img`                      |
+| `initLayers`                     | Native `Node` layers; pass the effect layer to wipe and transform helpers |
+
+RAM, Matrix, and ColorPalette are excluded from this migration. The existing
+palette demo continues to use Card. No duplicate typography, image, title, or
+card wrapper is needed.
